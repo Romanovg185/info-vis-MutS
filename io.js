@@ -1,26 +1,54 @@
-var data = new Array();
+var data = new Array
 
-function pushToData(myLog){
-	console.log(myLog);
-	data.push(myLog);
+// Generates a datapoint from a line in the preprocessed code
+// using the constructor from data-point-classdef.js
+function makeDataPoint(ts){
+	var timeStamp = ts[0];
+	var nGATC = Number(ts[1]);
+	var nProt = Number(ts[2]);
+	var states = new Array();
+	for (var i = 3; i < 3+nGATC; i++){
+		states.push(ts[i]);
+	}
+	var positions = new Array();
+	for (var i = 3+nGATC; i < ts.length; i++){
+		positions.push(ts[i]);
+	}
+	var timeStep = new DataPoint(timeStamp, nGATC, nProt, states, positions);
+	return timeStep;
 };
 
-function readFile(file) {
+function makeSimulation(myLog){
+	var largeArray = myLog.split('\n');
+	var simulation = new Array();
+	// Ignore last one since it is apparently empty
+	for (var i = 0; i < largeArray.length-1; i++) {
+		simulation.push(makeDataPoint(largeArray[i].split(',')));
+	}
+	return simulation;
+};
+
+function readFile(file, i) {
     var myReader = new FileReader();
   	myReader.readAsText(file);
   	myReader.onload = function(e) {
     	var rawLog = myReader.result;
-      	pushToData(rawLog);
-  	};
+      	data[i] = makeSimulation(rawLog);
+    }
 } 
 
 function handleFileSelect(evt) {
     var files = evt.target.files; // FileList object
     for (var i = 0; i < files.length; i++) {
         myFile = files.item(i);
-        readFile(myFile);
+        readFile(myFile, i);
     }
-    console.log(data);
 };
 
 document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+
+
+document.getElementById("clickMe").onclick = function() {
+	console.log(data[0][1].timestep)
+}
