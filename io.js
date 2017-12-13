@@ -33,7 +33,7 @@ function readFile(file, i) {
   	myReader.readAsText(file);
   	myReader.onload = function(e) {
     	var rawLog = myReader.result;
-      	data[i] = makeSimulation(rawLog);
+      	data[i] = new DataList(makeSimulation(rawLog));
     }
 } 
 
@@ -50,5 +50,6 @@ document.getElementById('files').addEventListener('change', handleFileSelect, fa
 
 
 document.getElementById("clickMe").onclick = function() {
-	console.log(data[0][1].timestep)
+	var foo = data[0].timeIntervalSlice(18, 20);
+	drawHistogram(foo);
 }

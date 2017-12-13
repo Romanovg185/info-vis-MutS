@@ -1,18 +1,36 @@
 <!DOCTYPE html>
+<meta charset="utf-8">
 <html>
 <head>
 	<title>This is a title</title>
 	<script type="text/javascript" src="d3.v4.min.js" charset="utf-8"></script>
 	<script type="text/javascript" src="protein-classdef.js" charset="utf-8"></script>
-    <script type="text/javascript" src="data-point-classdef.js" charset="utf-8"></script>
+    <script type="text/javascript" src="data-point-classdef.js" charset="utf-8">
+    </script>
+    <script type="text/javascript" src="data-list-classdef.js" charset="utf-8"></script>
 
 </head>
 <body>
+
+<style>
+
+.bar rect {
+  fill: steelblue;
+}
+
+.bar text {
+  fill: #fff;
+  font: 10px sans-serif;
+}
+
+</style>
+<svg width="1000" height="500"></svg>
 
 <input type="file" id="files" name="files[]" multiple />
 <input id="clickMe" type="button" value="clickme" onclick="doFunction();" />
 <output id="list"></output>
 <script type="text/javascript" src="io.js" charset="utf-8"></script>
+<script type="text/javascript" src="standard-histogram.js" charset="utf-8"></script>
 
 </body>
 </html>
