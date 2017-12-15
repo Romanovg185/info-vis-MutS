@@ -51,5 +51,5 @@ document.getElementById('files').addEventListener('change', handleFileSelect, fa
 
 document.getElementById("clickMe").onclick = function() {
 	var foo = data[0].timeIntervalSlice(18, 20);
-	drawHistogram(foo);
+	main(foo);
 }
