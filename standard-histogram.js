@@ -1,6 +1,6 @@
 var maxValue = 0;
 var minValue = 0;
-var colorDict = ["red", "blue", "black", "green", "purple"]
+var colorDict = ["purple", "blue", "green", "red"]
 
 
 
@@ -103,25 +103,28 @@ function drawHistogramOnScreen(sortedBins, extraDataForXScaling){
     var y = d3.scaleLinear()
               .domain([0, maxY])
               .range([height, 0]);
-
-    for (let h = 3; h < sortedBinsTranspose.length; h++){
-        var bar = g.selectAll(".bar")
+    var bar = g.selectAll(".bar")
                 .data(binsForFitting)
                 .enter().append("g")
-                .attr("class", "bar")
-                .attr("transform", function(d, i) { console.log(y(sortedBinsTranspose[h][i].first)); return "translate(" + x(d.x0) + "," + y(sortedBinsTranspose[h][i].first) + ")"; })
-                .style("fill", function(d, i){var color = colorDict[sortedBinsTranspose[h][i].second]; console.log(color); return color});
+                .attr("class", "bar");
 
+    for (var h = sortedBinsTranspose.length - 4; h > 0; h--){
+        for (var i  = 0; i < sortedBinsTranspose[h].length; i++){
+            console.log(sortedBinsTranspose[h][i].second)
+        }
         bar.append("rect")
             .attr("x", 1)
             .attr("width", x(binsForFitting[0].x1) - x(binsForFitting[0].x0) - 1)
-            .attr("height", function(d, i) { return height - y(sortedBinsTranspose[h][i].first); });
+            .attr("height", function(d, i) { return height - y(sortedBinsTranspose[h][i].first); })
+            .attr("transform", function(d, i) {; return "translate(" + x(d.x0) + "," + y(sortedBinsTranspose[h][i].first) + ")"; })
+            .style("fill", function(d, i){var color = colorDict[sortedBinsTranspose[h][i].second]; return color});
 
-        g.append("g")
+    }
+
+    g.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x));
-    }
 }
 
 function drawHistogram(dataPerProtein){
@@ -129,109 +132,7 @@ function drawHistogram(dataPerProtein){
     drawHistogramOnScreen(sortedBins, dataPerProtein[1]);
 }
 
-//--------------------- Line graph -----------------------------------------------------------------------------------------------------------------//
-function makeBinsLineGraph(positionData){
-    var formatCount = d3.format(",.0f");
-    var svg = d3.select("svg");
-    var margin = {top: 10, right: 30, bottom: 30, left: 30};
-    var width = +svg.attr("width") - margin.left - margin.right;
-    var height = +svg.attr("height") - margin.top - margin.bottom;
-    var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var x = d3.scaleLinear()
-        .domain([minValue, maxValue])
-        .range([0, width])
-
-    var bins = d3.histogram()
-        .domain(x.domain())
-        .thresholds(x.ticks(50))
-        (positionData);
-    return bins;
-}
-
-function getXYValuesLineGraph(bins){
-    var xes = [];
-    var ys = [];
-    for (let i=0; i<bins.length; i++){
-        var xRow = [];
-        var yRow = [];
-        for (let j=0; j<bins[i].length; j++){
-            xRow.push((bins[i][j].x1 + bins[i][j].x0)/2);
-            yRow.push(bins[i][j].length);
-        }
-        xes.push(xRow);
-        ys.push(yRow);
-    }
-    return [xes, ys];
-}
-
-function drawLineGraph(dataPerProtein){
-    console.log(dataPerProtein);
-    var bins = [];
-    dataPerProtein.forEach(function(el){bins.push(makeBinsLineGraph(el))});
-    var xyData = getXYValuesLineGraph(bins);
-    var xes = xyData[0];
-    var ys = xyData[1];
-
-    for (let h = 0; h < xes.length; h++){
-        var dataD3CanRead = []
-        for (let i = 0; i < xes[h].length; i++){
-            dataD3CanRead.push({x: xes[h][i], y: ys[h][i]});
-        }
-
-        console.log(dataD3CanRead);
-
-        var lineData = dataD3CanRead;
-
-        var vis = d3.select('#visualisation'),
-        WIDTH = 1000,
-        HEIGHT = 500,
-        MARGINS = {
-          top: 20,
-          right: 20,
-          bottom: 20,
-          left: 50
-        },
-        xRange = d3.scaleLinear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([d3.min(lineData, function(d) {
-          return d.x;
-        }), d3.max(lineData, function(d) {
-          return d.x;
-        })]),
-        yRange = d3.scaleLinear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([d3.min(lineData, function(d) {
-          return d.y;
-        }), d3.max(lineData, function(d) {
-          return d.y;
-        })]),
-        xAxis = d3.axisBottom(xRange).tickFormat(function(d){ return d.x;});
-        yAxis = d3.axisRight(yRange);
-
-        vis.append('svg:g')
-        .attr('class', 'x axis')
-        .attr('transform', 'translate(0,' + (HEIGHT - MARGINS.bottom) + ')')
-        .call(xAxis);
-
-        vis.append('svg:g')
-        .attr('class', 'y axis')
-        .attr('transform', 'translate(' + (MARGINS.left) + ',0)')
-        .call(yAxis);
-
-        var lineFunc = d3.line()
-      .x(function(d) {
-        return xRange(d.x);
-      })
-      .y(function(d) {
-        return yRange(d.y);
-      })
-
-      vis.append('svg:path')
-      .attr('d', lineFunc(lineData))
-      .attr('stroke', 'blue')
-      .attr('stroke-width', 2)
-      .attr('fill', 'none');
-    }
-}
-
-function main(dataIn){
+function mainHistogram(dataIn){
     var dataPerProtein = [];
     for (let i = 0; i < dataIn.maxNumberOfProteins; i++) {
         dataPerProtein.push([]);
@@ -252,6 +153,6 @@ function main(dataIn){
             i++;
         }
     }
-    drawLineGraph(dataPerProtein);
+    drawHistogram(dataPerProtein);
 
 }

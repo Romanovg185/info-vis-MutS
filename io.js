@@ -35,7 +35,7 @@ function readFile(file, i) {
     	var rawLog = myReader.result;
       	data[i] = new DataList(makeSimulation(rawLog));
     }
-} 
+}
 
 function handleFileSelect(evt) {
     var files = evt.target.files; // FileList object
@@ -49,7 +49,19 @@ document.getElementById('files').addEventListener('change', handleFileSelect, fa
 
 
 
-document.getElementById("clickMe").onclick = function() {
-	var foo = data[0].timeIntervalSlice(18, 20);
-	main(foo);
+document.getElementById("clickMeHist").onclick = function() {
+    console.log(data);
+//	var foo = data[0].timeIntervalSlice(5, 15);
+//	mainHistogram(foo);
 }
+
+document.getElementById("clickMeCircHist").onclick = function() {
+	var foo = data[0].timeIntervalSlice(5, 15);
+	mainCircularHistogram(foo);
+}
+
+document.getElementById("clickMeLine").onclick = function() {
+	var foo = data[0].timeIntervalSlice(5, 15);
+	mainLineGraph(foo);
+}
+
