@@ -24,7 +24,9 @@ function drawCircleHistogram(angleData, i){
     var svg = d3.select("#circHist")
         .attr("width", 1000)
         .attr("height", 1000)
-        .append("g");
+        .append("g")
+        .attr("transform", "translate(" + 500 + "," + 500 + ")");
+
 
     // Just does the grouping
     var intervals = d3.range(0, 2*Math.PI, 2*Math.PI/numBinsCircularHistogram);
