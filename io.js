@@ -63,13 +63,13 @@ document.getElementById("clickMeLine").onclick = function() {
 	mainLineGraph(foo);
 }
 
-
+// done by using the JQuery and Jquery-IO library
 
 $( function() {
 
 	$( "#slider-range" ).slider({
 		range: true,
-		min: 0,
+		min: 0, // TODO should be based on the min and max timestep value of data-list
 		max: 30,
 		values: [ 5, 15 ],
 		slide: function( event, ui ) {
@@ -89,7 +89,7 @@ $( "#slider-range" ).on( "slidestop", function( event, ui ) {
 		$( "#slider-range" ).slider( "values", 0 ), 
 		$( "#slider-range" ).slider( "values", 1 )
 		);
-	d3.select("#circHist").selectAll("*").remove();
+	d3.select("#circHist").selectAll("*").remove(); // TODO does not work properly for the circular histogram
 	d3.select('#visualisation').selectAll("*").remove();
 	mainCircularHistogram(foo);
 	mainLineGraph(foo);

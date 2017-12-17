@@ -29,26 +29,28 @@
   font: 10px sans-serif;
 }
 
+
 </style>
 
 
 <p>
-  <label for="amount">time range:</label>
-  <input type="text" id="timerange" readonly style="border:0; color:#f6931f; font-weight:bold;">
-  <div id="slider-range"></div>
-  <div id="slider-value" style="display: none;"></div>
+	<input type="file" id="files" name="files[]" multiple />
+	<input id="clickMeHist" type="button" value="Histogram" onclick="doFunction();" />
+	<input id="clickMeCircHist" type="button" value="Circular Histogram" onclick="doFunction();" />
+	<input id="clickMeLine" type="button" value="Line" onclick="doFunction();" />
 </p>
-<svg width="1000" height="500"></svg>
+
+<p>
+	<label for="amount" style="fill: #fff; font: 12px sans-serif;">time range:</label>
+	<input type="text" id="timerange" readonly style="border:0; color:#f6931f; font-weight:bold;">
+	<div id="slider-range"></div>
+	<div id="slider-value" style="display: none;"></div>
+</p>
 
 <svg id="visualisation" width="1000" height="500"></svg>
-
 <svg id="circHist" width="1000" height="500"></svg>
+<svg width="1000" height="500"></svg>
 
-<input type="file" id="files" name="files[]" multiple />
-
-<input id="clickMeHist" type="button" value="Histogram" onclick="doFunction();" />
-<input id="clickMeCircHist" type="button" value="Circular Histogram" onclick="doFunction();" />
-<input id="clickMeLine" type="button" value="Line" onclick="doFunction();" />
 <output id="list"></output>
 <script type="text/javascript" src="io.js" charset="utf-8"></script>
 <script type="text/javascript" src="standard-histogram.js" charset="utf-8"></script>
