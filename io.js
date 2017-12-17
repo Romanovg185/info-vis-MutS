@@ -1,5 +1,4 @@
 var data = new Array
-
 // Generates a datapoint from a line in the preprocessed code
 // using the constructor from data-point-classdef.js
 function makeDataPoint(ts){
@@ -48,11 +47,10 @@ function handleFileSelect(evt) {
 document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
 
-
 document.getElementById("clickMeHist").onclick = function() {
-    console.log(data);
-//	var foo = data[0].timeIntervalSlice(5, 15);
-//	mainHistogram(foo);
+    // console.log(data);
+	// var foo = data[0].timeIntervalSlice(5, 15);
+	// mainHistogram(foo);
 }
 
 document.getElementById("clickMeCircHist").onclick = function() {
@@ -64,4 +62,37 @@ document.getElementById("clickMeLine").onclick = function() {
 	var foo = data[0].timeIntervalSlice(5, 15);
 	mainLineGraph(foo);
 }
+
+
+
+$( function() {
+
+	$( "#slider-range" ).slider({
+		range: true,
+		min: 0,
+		max: 30,
+		values: [ 5, 15 ],
+		slide: function( event, ui ) {
+			$( "#timerange" ).val( "t1 = " + ui.values[ 0 ] + " and t2 =" + ui.values[ 1 ] );
+		},
+		stop: function( event, ui ) {
+		}
+	});
+
+	$( "#timerange" ).val( "t1 = " + $( "#slider-range" ).slider( "values", 0 ) +
+		" and t2 = " + $( "#slider-range" ).slider( "values", 1 ) );
+
+} );
+
+$( "#slider-range" ).on( "slidestop", function( event, ui ) {
+	var foo = data[0].timeIntervalSlice(
+		$( "#slider-range" ).slider( "values", 0 ), 
+		$( "#slider-range" ).slider( "values", 1 )
+		);
+	d3.select("#circHist").selectAll("*").remove();
+	d3.select('#visualisation').selectAll("*").remove();
+	mainCircularHistogram(foo);
+	mainLineGraph(foo);
+
+	} );
 
