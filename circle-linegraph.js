@@ -104,7 +104,7 @@ function drawCircleHistogram(angleData, i, xRange, yRange){
           .style("stroke-dasharray", "2,2")
           .style("stroke-width",".5px");
     }
-    var spokeLength = innerRadius - 5 + xRange(25*i) - xRange(0))
+    var spokeLength = innerRadius - 5 + xRange(25*i) - xRange(0)
 
     var lineFunc = d3.line()
         .x(function(d) {return xRange(d.x);})
