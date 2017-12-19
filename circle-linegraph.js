@@ -73,9 +73,19 @@ function drawCircleHistogram(angleData, j, xRange, yRange){
         .thresholds(intervals)
         (angleData);
 
+    if (j == 3){
+        console.log(dataCircularIncomplete)
+    }
+
     // Uses the length of the grouped arrays to determine the real histogram
     dataCircular = [];
-    dataCircularIncomplete.forEach(function(el){ dataCircular.push(el.length)});
+    for(let i = 0; i < numBinsCircularHistogram; i++){
+        if(i < dataCircularIncomplete.length){
+            dataCircular.push(dataCircularIncomplete[i].length);
+        } else { // Deal with empty bins of hist function
+            dataCircular.push(0);
+        }
+    }
 
     var centroidPoints = [];
     for(let i = 0; i < dataCircular.length; i++){
@@ -89,6 +99,11 @@ function drawCircleHistogram(angleData, j, xRange, yRange){
 
     var lineData = centroidPoints;
     lineData.push(centroidPoints[0]);
+
+    if (j == 3){
+        console.log(centroidPoints);
+    }
+
 
     var lineFunc = d3.line()
         .x(function(d) {return xRange(d.x);})

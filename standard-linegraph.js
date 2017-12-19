@@ -34,7 +34,6 @@ function getXYValuesLineGraph(bins){
 }
 
 function drawLineGraph(dataPerProtein){
-    console.log(dataPerProtein);
     var bins = [];
     dataPerProtein.forEach(function(el){bins.push(makeBinsLineGraph(el))});
     var xyData = getXYValuesLineGraph(bins);

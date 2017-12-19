@@ -1,6 +1,7 @@
 var data = new Array
-var tmin = 0.0 
+var tmin = 0.0
 var tmax = 30.0
+var isShowingStates = [true, true, true, true]
 
 // Generates a datapoint from a line in the preprocessed code
 // using the constructor from data-point-classdef.js
@@ -58,14 +59,14 @@ document.getElementById("clickMeHist").onclick = function() {
 
 	tmin = data[0].tmin(); // create new tmin and tmax values
 	tmax = data[0].tmax();
-	$( "#slider-value").trigger('change'); // initiates slider after event change 
+	$( "#slider-value").trigger('change'); // initiates slider after event change
 
 
 }
 
 document.getElementById("clickMeCircHist").onclick = function() {
-	var foo = data[0].timeIntervalSlice(5, 30);
-	mainCircularHistogram(foo);
+	var bar = data[0].timeIntervalSlice(3, 18);
+	mainCircularHistogram(bar);
 }
 
 document.getElementById("clickMeLine").onclick = function() {
@@ -73,16 +74,51 @@ document.getElementById("clickMeLine").onclick = function() {
 	mainLineGraph(foo);
 }
 
+// Change globals if button changes
+document.getElementById('boxZero').onclick = function() {
+    if (this.checked){
+        isShowingStates[0] = true;
+    } else {
+        isShowingStates[0] = false;
+    }
+    master(null, null);
+}
 
+document.getElementById('boxOne').onclick = function() {
+    if (this.checked){
+        isShowingStates[1] = true;
+    } else {
+        isShowingStates[1] = false;
+    }
+    master(null, null);
+}
+
+document.getElementById('boxTwo').onclick = function() {
+    if (this.checked){
+        isShowingStates[2] = true;
+    } else {
+        isShowingStates[2] = false;
+    }
+    master(null, null);
+}
+
+document.getElementById('boxThree').onclick = function() {
+    if (this.checked){
+        isShowingStates[3] = true;
+    } else {
+        isShowingStates[3] = false;
+    }
+    master(null, null);
+}
 
 //jquery eventlistener
 $( "#slider-value").on( "change", function( event, ui, data) {
 	$( function() {
 		$( "#slider-range" ).slider({
 			range: true,
-			min: tmin, // TODO should be based on the min and max timestep value of data-list
+			min: tmin,
 			max: tmax,
-			values: [ 5, 15 ],
+			values: [ 3, 18 ],
 			slide: function( event, ui ) {
 				$( "#timerange" ).val( "t1 = " + ui.values[ 0 ] + " and t2 =" + ui.values[ 1 ] );
 			},
@@ -96,14 +132,23 @@ $( "#slider-value").on( "change", function( event, ui, data) {
 	} );
 } );
 
-$( "#slider-range" ).on( "slidestop", function( event, ui ) {
-	var foo = data[0].timeIntervalSlice(
-		$( "#slider-range" ).slider( "values", 0 ), 
+// Master function called on change slider or change checkbox
+function master(event, ui){
+    var foo = data[0].timeIntervalSlice(
+		$( "#slider-range" ).slider( "values", 0 ),
 		$( "#slider-range" ).slider( "values", 1 )
 		);
+    console.log(foo.data[18]);
+    var statesOfRelevance = []
+    isShowingStates.forEach(function(el, i){if(el == true)statesOfRelevance.push(i);});
+    foo = foo.stateSlice(statesOfRelevance);
+    console.log(foo.data[18]);
 	d3.select("#circHist").selectAll("*").remove(); // TODO does not work properly for the circular histogram
-	d3.select("#circHist").selectAll("*").selectAll("*").remove();
 	d3.select('#visualisation').selectAll("*").remove();
 	mainCircularHistogram(foo);
 	mainLineGraph(foo);
-	});
+}
+
+
+$( "#slider-range" ).on( "slidestop", master
+	);
