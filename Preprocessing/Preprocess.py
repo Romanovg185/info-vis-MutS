@@ -60,7 +60,8 @@ def read_position(position_file_name):
 def read_status(status_file_name):
     total_status_read = []
     with open(status_file_name) as file:
-        n_GATC = 0
+        n_GATC = 2
+        quirk_flag = False
         for i, line in enumerate(file):
             time_element = []
             line_list = line.split(' ')
@@ -73,8 +74,12 @@ def read_status(status_file_name):
 
             if i == 0:
                 n_GATC = len(line_list) - 1
+
+            if line_list[n_GATC - 1] == '1' and line_list[n_GATC] == '1':
+                quirk_flag = True
+
             if len(line_list) > n_GATC + 1:
-                for status in line_list[n_GATC+1:]:
+                for status in line_list[n_GATC+1+quirk_flag:]:
                     time_element.append(status)
             total_status_read.append(time_element)
     return total_status_read
