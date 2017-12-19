@@ -1,4 +1,7 @@
 var data = new Array
+var tmin = 0.0 
+var tmax = 30.0
+
 // Generates a datapoint from a line in the preprocessed code
 // using the constructor from data-point-classdef.js
 function makeDataPoint(ts){
@@ -42,7 +45,14 @@ function handleFileSelect(evt) {
         myFile = files.item(i);
         readFile(myFile, i);
     }
+    tmin = data.tmin;
+    tmax = data.tmax;
+    $( "#slider-value").trigger('change'); // initiates slider after event change
 };
+
+
+// done by using the JQuery and Jquery-IO library
+
 
 document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
@@ -63,25 +73,28 @@ document.getElementById("clickMeLine").onclick = function() {
 	mainLineGraph(foo);
 }
 
-// done by using the JQuery and Jquery-IO library
 
-$( function() {
 
-	$( "#slider-range" ).slider({
-		range: true,
-		min: 0, // TODO should be based on the min and max timestep value of data-list
-		max: 30,
-		values: [ 5, 15 ],
-		slide: function( event, ui ) {
-			$( "#timerange" ).val( "t1 = " + ui.values[ 0 ] + " and t2 =" + ui.values[ 1 ] );
-		},
-		stop: function( event, ui ) {
-		}
-	});
+//jquery eventlistener
 
-	$( "#timerange" ).val( "t1 = " + $( "#slider-range" ).slider( "values", 0 ) +
-		" and t2 = " + $( "#slider-range" ).slider( "values", 1 ) );
+$( "#slider-value").on( "change", function( event, ui) {
+	$( function() {
+		$( "#slider-range" ).slider({
+			range: true,
+			min: tmin, // TODO should be based on the min and max timestep value of data-list
+			max: tmax,
+			values: [ 5, 15 ],
+			slide: function( event, ui ) {
+				$( "#timerange" ).val( "t1 = " + ui.values[ 0 ] + " and t2 =" + ui.values[ 1 ] );
+			},
+			stop: function( event, ui ) {
+			}
+		});
 
+		$( "#timerange" ).val( "t1 = " + $( "#slider-range" ).slider( "values", 0 ) +
+			" and t2 = " + $( "#slider-range" ).slider( "values", 1 ) );
+
+	} );
 } );
 
 $( "#slider-range" ).on( "slidestop", function( event, ui ) {
@@ -90,9 +103,8 @@ $( "#slider-range" ).on( "slidestop", function( event, ui ) {
 		$( "#slider-range" ).slider( "values", 1 )
 		);
 	d3.select("#circHist").selectAll("*").remove(); // TODO does not work properly for the circular histogram
+	d3.select("#circHist").selectAll("*").selectAll("*").remove();
 	d3.select('#visualisation').selectAll("*").remove();
 	mainCircularHistogram(foo);
 	mainLineGraph(foo);
-
-	} );
-
+	});
