@@ -1,26 +1,14 @@
 var maxValue = 0;
 var minValue = 0;
-var colorDict = ["purple", "blue", "green", "red"]
+var colorDict = ["purple", "blue", "green", "red"];
 
-
-
-
+// Classdef of Pair, corresponding to a tuple of (value, p
 function Pair(first, second){
     this.first = first;
     this.second = second;
 }
 
-function makeOverlapCorrect(dataPerProtein){
-    var dataAsPair = []
-    for(let i = 0; i < dataPerProtein.length; i++){
-        dataAsPair.push([])
-        for(let j = 0; j < dataPerProtein[i].length; j++){
-            dataAsPair[i][j] = new Pair(dataPerProtein[i][j], i);
-        }
-    }
-
-}
-
+// Returns histogram bins based on the raw position data passed in as array of numbers
 function makeBinsHelper(positionData){
     var formatCount = d3.format(",.0f");
     var svg = d3.select("svg");
@@ -40,8 +28,10 @@ function makeBinsHelper(positionData){
     return bins;
 }
 
+
 function makeBins(positionData, i){
     var allBins = []
+    // Loop results in a matrix of pairs
     for (let i = 0; i < positionData.length; i++){
         allBins.push([]);
         var bins = makeBinsHelper(positionData[i]);

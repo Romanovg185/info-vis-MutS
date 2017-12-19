@@ -51,12 +51,14 @@ document.getElementById('files').addEventListener('change', handleFileSelect, fa
 
 document.getElementById("clickMeHist").onclick = function() {
     console.log(data);
+    var foo = data[0].stateSlice([1,2])
+    console.log(foo);
 //	var foo = data[0].timeIntervalSlice(5, 15);
 //	mainHistogram(foo);
 }
 
 document.getElementById("clickMeCircHist").onclick = function() {
-	var foo = data[0].timeIntervalSlice(5, 15);
+	var foo = data[0].timeIntervalSlice(5, 30);
 	mainCircularHistogram(foo);
 }
 
