@@ -109,6 +109,7 @@ function mainLineGraph(dataIn){
         let i = 0;
         for (let protein in dataIn.data[key].positions){
             //Note the potential confusion factor here, I divide by 100 for some reason...
+            // QQ something to do with index 3000 @ 30 sec timestep?
             let myPosition = dataIn.data[key].positions[protein].position/100; //Suspicious division by 100
             if (myPosition > maxValue){
                 maxValue = myPosition;

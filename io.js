@@ -1,4 +1,6 @@
 var data = new Array
+var tmin = 0.0 
+var tmax = 30.0
 
 // Generates a datapoint from a line in the preprocessed code
 // using the constructor from data-point-classdef.js
@@ -45,16 +47,20 @@ function handleFileSelect(evt) {
     }
 };
 
+
+// done by using the JQuery and Jquery-IO library
+
+
 document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
-
-
+// initiate slider after clicking on Histogram button TODO improve UI
 document.getElementById("clickMeHist").onclick = function() {
-    console.log(data);
-    var foo = data[0].stateSlice([1,2])
-    console.log(foo);
-//	var foo = data[0].timeIntervalSlice(5, 15);
-//	mainHistogram(foo);
+
+	tmin = data[0].tmin(); // create new tmin and tmax values
+	tmax = data[0].tmax();
+	$( "#slider-value").trigger('change'); // initiates slider after event change 
+
+
 }
 
 document.getElementById("clickMeCircHist").onclick = function() {
@@ -67,3 +73,37 @@ document.getElementById("clickMeLine").onclick = function() {
 	mainLineGraph(foo);
 }
 
+
+
+//jquery eventlistener
+$( "#slider-value").on( "change", function( event, ui, data) {
+	$( function() {
+		$( "#slider-range" ).slider({
+			range: true,
+			min: tmin, // TODO should be based on the min and max timestep value of data-list
+			max: tmax,
+			values: [ 5, 15 ],
+			slide: function( event, ui ) {
+				$( "#timerange" ).val( "t1 = " + ui.values[ 0 ] + " and t2 =" + ui.values[ 1 ] );
+			},
+			stop: function( event, ui ) {
+			}
+		});
+
+		$( "#timerange" ).val( "t1 = " + $( "#slider-range" ).slider( "values", 0 ) +
+			" and t2 = " + $( "#slider-range" ).slider( "values", 1 ) );
+
+	} );
+} );
+
+$( "#slider-range" ).on( "slidestop", function( event, ui ) {
+	var foo = data[0].timeIntervalSlice(
+		$( "#slider-range" ).slider( "values", 0 ), 
+		$( "#slider-range" ).slider( "values", 1 )
+		);
+	d3.select("#circHist").selectAll("*").remove(); // TODO does not work properly for the circular histogram
+	d3.select("#circHist").selectAll("*").selectAll("*").remove();
+	d3.select('#visualisation').selectAll("*").remove();
+	mainCircularHistogram(foo);
+	mainLineGraph(foo);
+	});
