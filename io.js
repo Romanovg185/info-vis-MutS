@@ -45,9 +45,6 @@ function handleFileSelect(evt) {
         myFile = files.item(i);
         readFile(myFile, i);
     }
-    tmin = data.tmin;
-    tmax = data.tmax;
-    $( "#slider-value").trigger('change'); // initiates slider after event change
 };
 
 
@@ -56,11 +53,14 @@ function handleFileSelect(evt) {
 
 document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
-
+// initiate slider after clicking on Histogram button TODO improve UI
 document.getElementById("clickMeHist").onclick = function() {
     // console.log(data);
 	// var foo = data[0].timeIntervalSlice(5, 15);
 	// mainHistogram(foo);
+	tmin = data[0].tmin(); // create new tmin and tmax values
+	tmax = data[0].tmax();
+	$( "#slider-value").trigger('change'); // initiates slider after event change 
 }
 
 document.getElementById("clickMeCircHist").onclick = function() {
@@ -76,8 +76,7 @@ document.getElementById("clickMeLine").onclick = function() {
 
 
 //jquery eventlistener
-
-$( "#slider-value").on( "change", function( event, ui) {
+$( "#slider-value").on( "change", function( event, ui, data) {
 	$( function() {
 		$( "#slider-range" ).slider({
 			range: true,

@@ -1,8 +1,10 @@
 function DataList(dl) {
 	this.data = {}; // Data is stored as a "dictionary" of timestep : DataPoint
 	this.size = 0;
+	this.timestamps = new Array();
 	let i = 0;
 	for (let point of dl){
+		this.timestamps.push(point.timestep)
 		this.data[point.timestep] = point;
 		this.size++;
 		i++;
@@ -10,6 +12,17 @@ function DataList(dl) {
 			this.maxNumberOfProteins = point.nMutS;
 		}
 	}
+	// TODO : returns NaN instead of 30.0 ??
+	this.tmin = function(){
+		let tmin_ = Math.min(...this.timestamps);
+		return tmin_
+	}
+
+	this.tmax = function(){
+		var tmax_ = Math.max(...this.timestamps);
+		return tmax_
+	}
+
 
 	// Return a slice of a datalist within a certain time range, most likely useful for the time sliders
 	this.timeIntervalSlice = function(start, end){
@@ -23,16 +36,4 @@ function DataList(dl) {
 		return new DataList(ret);
 	}
 
-	// Return the minimum timestep value 
-	this.timevalues = function(start, end){
-		let timesteps = new Array();
-		for (let k in this.data){
-			timesteps.push(this.data[k].timestep)
-		}
-		return timesteps;
-	}
-
-	this.tmin = parseFloat(Math.min(this.timevalues)); 
-
-	this.tmax = parseFloat(Math.max(this.timevalues)); // TODO : returns 100 instead of 30.0 ??
 }
