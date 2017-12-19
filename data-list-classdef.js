@@ -49,19 +49,33 @@ function DataList(dl) {
             var i = 0;
             for (let protein of this.data[k].positions){
                 for(var state of states){
-                    if (protein.state == state || isNaN(parseInt(protein.state))){
+                    if (protein.state == state){
                         newDataPoint.positions.push(protein);
                         i++;
                     }
                 }
+                if (isNaN(parseInt(protein.state))){
+                    newDataPoint.positions.push(protein);
+                    i++;
+                }
             }
-            ret.maxNumberOfProteins = i;
             ret.data[currentTimestep] = newDataPoint;
             ret.size++;
-      }
+        }
+        ret.maxNumberOfProteins = findMaxNumberOfProteins(ret);
         // currentTimestep refers to the last value timestep took on, because var indicates function scope, not lexical scope
         return ret;
 	}
 
 
+}
+
+function findMaxNumberOfProteins(dataList){
+    var maxNumberOfProteins = 0
+    for (let k in dataList.data){
+        if(maxNumberOfProteins < dataList.data[k].positions.length){
+            maxNumberOfProteins = dataList.data[k].positions.length;
+        }
+    }
+    return maxNumberOfProteins
 }
