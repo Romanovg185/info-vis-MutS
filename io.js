@@ -55,16 +55,16 @@ document.getElementById('files').addEventListener('change', handleFileSelect, fa
 
 // initiate slider after clicking on Histogram button TODO improve UI
 document.getElementById("clickMeHist").onclick = function() {
-    // console.log(data);
-	// var foo = data[0].timeIntervalSlice(5, 15);
-	// mainHistogram(foo);
+
 	tmin = data[0].tmin(); // create new tmin and tmax values
 	tmax = data[0].tmax();
 	$( "#slider-value").trigger('change'); // initiates slider after event change 
+
+
 }
 
 document.getElementById("clickMeCircHist").onclick = function() {
-	var foo = data[0].timeIntervalSlice(5, 15);
+	var foo = data[0].timeIntervalSlice(5, 30);
 	mainCircularHistogram(foo);
 }
 
