@@ -118,7 +118,8 @@ $( "#slider-value").on( "change", function( event, ui, data) {
 			range: true,
 			min: tmin,
 			max: tmax,
-			values: [ 3, 18 ],
+			step: 0.01,
+			values: [ 5, 15 ],
 			slide: function( event, ui ) {
 				$( "#timerange" ).val( "t1 = " + ui.values[ 0 ] + " and t2 =" + ui.values[ 1 ] );
 			},
