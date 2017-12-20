@@ -1,53 +1,29 @@
-function makeBinsLineGraph(positionData){
-    var formatCount = d3.format(",.0f");
-    var svg = d3.select("svg");
-    var margin = {top: 10, right: 30, bottom: 30, left: 30};
-    var width = +svg.attr("width") - margin.left - margin.right;
-    var height = +svg.attr("height") - margin.top - margin.bottom;
-    var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var x = d3.scaleLinear()
-        .domain([minValue, maxValue])
-        .range([0, width])
-
-    var bins = d3.histogram()
-        .domain(x.domain())
-        .thresholds(x.ticks(50))
-        (positionData);
-    return bins;
-}
-
-function getXYValuesLineGraph(bins){
-    var xes = [];
-    var ys = [];
-    for (let i=0; i<bins.length; i++){
-        var xRow = [];
-        var yRow = [];
-        for (let j=0; j<bins[i].length; j++){
-            xRow.push((bins[i][j].x1 + bins[i][j].x0)/2);
-            yRow.push(bins[i][j].length);
-        }
-        xes.push(xRow);
-        ys.push(yRow);
-    }
-    return [xes, ys];
-}
-
-function drawLineGraph(dataPerProtein){
-	console.log(dataPerProtein)
+function drawLineGraphSpacetime(dataPerProtein, tMin, tMax){
+    console.log(dataPerProtein)
     var bins = [];
     dataPerProtein.forEach(function(el){bins.push(makeBinsLineGraph(el))});
     var xyData = getXYValuesLineGraph(bins);
-    var xes = xyData[0];
-    var ys = xyData[1];
+    var xes = [];
+    var ys = [];
+    for (let i = 0; i < dataPerProtein.length; i++){
+        xes.push([]);
+        ys.push([]);
+        for(let j = 0; j < dataPerProtein[i].length; j++){
+            xes[i].push(dataPerProtein[i][j].p);
+            ys[i].push(dataPerProtein[i][j].t);
+        }
+    }
 
     var xMin = 4294967295;
     var xMax = -4294967295;
-    var yMax = 0;
+    var yMin = tMin;
+    var yMax = tMax;
 
     xes.forEach(function(el){xMin = d3.min(el) < xMin ? d3.min(el) : xMin});
     xes.forEach(function(el){xMax = d3.max(el) > xMax ? d3.max(el) : xMax});
-    ys.forEach(function(el){yMax = d3.max(el) > yMax ? d3.max(el) : yMax});
+
+
+    console.log(yMax)
 
     var vis = d3.select('#visualisation'),
         WIDTH = 1000,
@@ -63,7 +39,7 @@ function drawLineGraph(dataPerProtein){
             .domain([xMin, xMax]),
         yRange = d3.scaleLinear()
             .range([HEIGHT - MARGINS.top, MARGINS.bottom])
-            .domain([0, yMax]),
+            .domain([yMin, yMax]),
         xAxis = d3.axisBottom(xRange).tickFormat(function(d){ return d.x;});
         yAxis = d3.axisRight(yRange);
 
@@ -99,7 +75,8 @@ function drawLineGraph(dataPerProtein){
     }
 }
 
-function mainLineGraph(dataIn){
+function mainLineGraphSpacetime(dataIn, tMin, tMax){
+    console.log(dataIn)
     var dataPerProtein = [];
     for (let i = 0; i < dataIn.maxNumberOfProteins; i++) {
         dataPerProtein.push([]);
@@ -117,10 +94,13 @@ function mainLineGraph(dataIn){
             if (myPosition < minValue){
                 minValue = myPosition;
             }
-            dataPerProtein[i].push(myPosition); //Glug glug glug, delicious Kool-Aid
+            dataPerProtein[i].push({t: key, p:myPosition}); //Glug glug glug, delicious Kool-Aid
             i++;
         }
     }
-    drawLineGraph(dataPerProtein);
+    for(let i = 0; i < dataPerProtein.length; i++){
+        dataPerProtein[i].sort(function(a,b){return a.t-b.t});
+    }
+    drawLineGraphSpacetime(dataPerProtein, tMin, tMax);
 
 }

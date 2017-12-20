@@ -118,8 +118,7 @@ $( "#slider-value").on( "change", function( event, ui, data) {
 			range: true,
 			min: tmin,
 			max: tmax,
-			step: 0.01,
-			values: [ 5, 15 ],
+			values: [ 3, 18 ],
 			slide: function( event, ui ) {
 				$( "#timerange" ).val( "t1 = " + ui.values[ 0 ] + " and t2 =" + ui.values[ 1 ] );
 			},
@@ -139,15 +138,13 @@ function master(event, ui){
 		$( "#slider-range" ).slider( "values", 0 ),
 		$( "#slider-range" ).slider( "values", 1 )
 		);
-    console.log(foo.data[18]);
     var statesOfRelevance = []
     isShowingStates.forEach(function(el, i){if(el == true)statesOfRelevance.push(i);});
     foo = foo.stateSlice(statesOfRelevance);
-    console.log(foo.data[18]);
 	d3.select("#circHist").selectAll("*").remove(); // TODO does not work properly for the circular histogram
 	d3.select('#visualisation').selectAll("*").remove();
-	mainCircularHistogram(foo);
-	mainLineGraph(foo);
+	mainCircularHistogramSpacetime(foo, $( "#slider-range" ).slider( "values", 0 ), $( "#slider-range" ).slider( "values", 1 ));
+	mainLineGraphSpacetime(foo, $( "#slider-range" ).slider( "values", 0 ), $( "#slider-range" ).slider( "values", 1 ));
 }
 
 

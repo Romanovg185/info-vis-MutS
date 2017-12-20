@@ -7,24 +7,26 @@ var viewWidth = window.innerWidth;
 var viewHeight = window.innerHeight;
 
 // Make the data into radians in the [0, tau] range
-function makeDataIntoAngles(dataPerProtein){
+function makeDataIntoAnglesSpacetime(dataPerProtein){
     var arcLength = maxValue - minValue;
     var angleData = [];
+    var timeData = [];
     for(var i = 0; i < dataPerProtein.length; i++){
         angleData.push([]);
+        timeData.push([]);
         for(var j = 0; j < dataPerProtein[i].length; j++){
-            var angle = 2*Math.PI*dataPerProtein[i][j]/arcLength;
+            var angle = 2*Math.PI*dataPerProtein[i][j].p/arcLength;
             angleData[i].push(angle < 0 ? 2*Math.PI+angle : angle);
+            timeData[i].push(dataPerProtein[i][j].t);
         }
     }
-    return angleData;
+    return [timeData, angleData];
 }
 
 // Obtain the ranges for perfect overlay
-function getRangesCircleHistogram(angleData){
+function getRangesCircleHistogramSpacetime(timeData, angleData, startTime, endTime){
     var maxRadiusList = [];
     for(let i = 0; i < angleData.length; i++){
-        var svg = d3.select('#circHist');
         WIDTH = 1000,
         HEIGHT = 1000,
         MARGINS = {
@@ -33,76 +35,39 @@ function getRangesCircleHistogram(angleData){
           bottom: 20,
           left: 50
         };
-
-        var intervals = d3.range(0, 2*Math.PI, 2*Math.PI/numBinsCircularHistogram);
-        var dataCircularIncomplete = d3.histogram()
-            .thresholds(intervals)
-            (angleData[i]);
-
-        // Uses the length of the grouped arrays to determine the real histogram
-        dataCircular = [];
-        dataCircularIncomplete.forEach(function(el){ dataCircular.push(el.length)});
-
-        var centroidPoints = [];
-        var maxRadius = 0;
-        for(let i = 0; i < dataCircular.length; i++){
-            var startAngle = 2*Math.PI*i/numBinsCircularHistogram;
-            var endAngle = 2*Math.PI*(i+1)/numBinsCircularHistogram;
-            var outerRadius = dataCircular[i];
-            maxRadius = outerRadius > maxRadius ? outerRadius : maxRadius;
+        var maxOfProt = 0;
+        for(let j=0; j < timeData[i].length; j++){
+            if(maxOfProt < timeData[i][j]){
+                maxOfProt = timeData[i][j];
+            }
         }
-        maxRadiusList.push(maxRadius)
-
+        maxRadiusList.push(maxOfProt);
     }
     var xRange = d3.scaleLinear()
         .range([MARGINS.left, WIDTH - MARGINS.right])
-        .domain([-1*d3.max(maxRadiusList), d3.max(maxRadiusList)]),
+        .domain([-1*endTime, endTime]),
     yRange = d3.scaleLinear()
         .range([HEIGHT - MARGINS.top, MARGINS.bottom])
-        .domain([-1*d3.max(maxRadiusList), d3.max(maxRadiusList)]);
+        .domain([-1*endTime, endTime]);
     return [xRange, yRange];
 }
 
 // Draws a single histogram, has to be extended to be good in overlapping
-function drawCircleHistogram(angleData, j, xRange, yRange){
+function drawCircleHistogramSpacetime(angleData, timeData, j, xRange, yRange){
     var svg = d3.select('#circHist');
 
-    // Just does the grouping
-    var intervals = d3.range(0, 2*Math.PI, 2*Math.PI/numBinsCircularHistogram);
-    var dataCircularIncomplete = d3.histogram()
-        .thresholds(intervals)
-        (angleData);
-
-    if (j == 3){
-        console.log(dataCircularIncomplete)
-    }
-
-    // Uses the length of the grouped arrays to determine the real histogram
-    dataCircular = [];
-    for(let i = 0; i < numBinsCircularHistogram; i++){
-        if(i < dataCircularIncomplete.length){
-            dataCircular.push(dataCircularIncomplete[i].length);
-        } else { // Deal with empty bins of hist function
-            dataCircular.push(0);
-        }
-    }
+    console.log(angleData.length);
+    console.log(timeData.length);
 
     var centroidPoints = [];
-    for(let i = 0; i < dataCircular.length; i++){
+    for(let i = 0; i < angleData.length; i++){
         var startAngle = 2*Math.PI*i/numBinsCircularHistogram;
-        var endAngle = 2*Math.PI*(i+1)/numBinsCircularHistogram;
-        var outerRadius = dataCircular[i];
-        var x = (outerRadius + innerRadius) * Math.cos((endAngle + startAngle)/2);
-        var y = (outerRadius + innerRadius) * Math.sin((endAngle + startAngle)/2);
+        var x = (timeData[i]) * Math.cos(angleData[i]);
+        var y = (timeData[i]) * Math.sin(angleData[i]);
         centroidPoints.push({x: x, y: y});
     }
 
     var lineData = centroidPoints;
-    lineData.push(centroidPoints[0]);
-
-    if (j == 3){
-        console.log(centroidPoints);
-    }
 
 
     var lineFunc = d3.line()
@@ -111,11 +76,12 @@ function drawCircleHistogram(angleData, j, xRange, yRange){
 
 
     // Circles axes
-    for(var i = 0; xRange(25*i) - xRange(0) + innerRadius < WIDTH/2; i++){
+    var WIDTH = 1000;
+    for(var i = 0; xRange(i) < WIDTH; i++){
         svg.append("circle")
             .attr("cx", xRange(0))
             .attr("cy", yRange(0))
-            .attr("r", (innerRadius - 5 + xRange(25*i) - xRange(0)))
+            .attr("r", 25*i)
           .style("fill", "none")
           .style("stroke", "#b1a7a7")
           .style("stroke-dasharray", "1,2")
@@ -150,17 +116,17 @@ function drawCircleHistogram(angleData, j, xRange, yRange){
 
 }
 
-function mainCircularHistogram(dataIn){
+function mainCircularHistogramSpacetime(dataIn, startTime, endTime){
     var dataPerProtein = [];
     for (let i = 0; i < dataIn.maxNumberOfProteins; i++) {
         dataPerProtein.push([]);
     }
-    console.log(dataPerProtein.length)
     // While determining the min/max position values, get the positions in a form of datapoint per protein
     for (let key in dataIn.data){
         let i = 0;
         for (let protein in dataIn.data[key].positions){
             //Note the potential confusion factor here, I divide by 100 for some reason...
+            // QQ something to do with index 3000 @ 30 sec timestep?
             let myPosition = dataIn.data[key].positions[protein].position/100; //Suspicious division by 100
             if (myPosition > maxValue){
                 maxValue = myPosition;
@@ -168,16 +134,19 @@ function mainCircularHistogram(dataIn){
             if (myPosition < minValue){
                 minValue = myPosition;
             }
-//            console.log(key)
-//            console.log("belonging to")
-//            console.log(i)
-            dataPerProtein[i].push(myPosition); //Glug glug glug, delicious Kool-Aid
+            dataPerProtein[i].push({t: key, p:myPosition}); //Glug glug glug, delicious Kool-Aid
             i++;
         }
     }
-    var angleData = makeDataIntoAngles(dataPerProtein);
-    var ranges = getRangesCircleHistogram(angleData)
+    for(let i = 0; i < dataPerProtein.length; i++){
+        dataPerProtein[i].sort(function(a,b){return a.t-b.t});
+    }
+    var resultingData = makeDataIntoAnglesSpacetime(dataPerProtein);
+    var angleData = resultingData[1];
+    var timeData = resultingData[0];
+    var ranges = getRangesCircleHistogramSpacetime(timeData, angleData, startTime, endTime)
+    console.log(ranges)
     for(let i = 0; i < angleData.length; i++){
-        drawCircleHistogram(angleData[i], i, ranges[0], ranges[1]);
+        drawCircleHistogramSpacetime(angleData[i], timeData[i],   i, ranges[0], ranges[1]);
     }
 }
