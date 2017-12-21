@@ -27,8 +27,8 @@ function makeDataIntoAnglesSpacetime(dataPerProtein){
 function getRangesCircleHistogramSpacetime(timeData, angleData, startTime, endTime){
     var maxRadiusList = [];
     for(let i = 0; i < angleData.length; i++){
-        WIDTH = 1000,
-        HEIGHT = 1000,
+        WIDTH = 850,
+        HEIGHT = 850,
         MARGINS = {
           top: 20,
           right: 20,
@@ -54,11 +54,7 @@ function getRangesCircleHistogramSpacetime(timeData, angleData, startTime, endTi
 
 // Draws a single histogram, has to be extended to be good in overlapping
 function drawCircleHistogramSpacetime(angleData, timeData, j, xRange, yRange){
-    var svg = d3.select('#circHist');
-
-    console.log(angleData.length);
-    console.log(timeData.length);
-
+    var svg = d3.select('#cSpaceTime');
     var centroidPoints = [];
     for(let i = 0; i < angleData.length; i++){
         var startAngle = 2*Math.PI*i/numBinsCircularHistogram;

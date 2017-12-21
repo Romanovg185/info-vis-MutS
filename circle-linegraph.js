@@ -1,6 +1,5 @@
 var minValue = 4294967295;
 var maxValue = -4294967295;
-var numBinsCircularHistogram = 40;
 var innerRadius = 50;
 
 var viewWidth = window.innerWidth;
@@ -24,9 +23,9 @@ function makeDataIntoAngles(dataPerProtein){
 function getRangesCircleHistogram(angleData){
     var maxRadiusList = [];
     for(let i = 0; i < angleData.length; i++){
-        var svg = d3.select('#circHist');
-        WIDTH = 1000,
-        HEIGHT = 1000,
+        var svg = d3.select('#cLinePlot');
+        WIDTH = 850,
+        HEIGHT = 850,
         MARGINS = {
           top: 20,
           right: 20,
@@ -54,18 +53,26 @@ function getRangesCircleHistogram(angleData){
         maxRadiusList.push(maxRadius)
 
     }
+    var maxRadius = 0;
+    for(let i = 0; i < maxRadiusList.length; i++){
+        if(maxRadiusList[i] > maxRadius){
+            maxRadius = maxRadiusList[i];
+        }
+    }
+    maxRadius += innerRadius;
     var xRange = d3.scaleLinear()
         .range([MARGINS.left, WIDTH - MARGINS.right])
-        .domain([-1*d3.max(maxRadiusList), d3.max(maxRadiusList)]),
+        .domain([-1*maxRadius, maxRadius]),
     yRange = d3.scaleLinear()
         .range([HEIGHT - MARGINS.top, MARGINS.bottom])
-        .domain([-1*d3.max(maxRadiusList), d3.max(maxRadiusList)]);
+        .domain([-1*maxRadius, maxRadius]);
     return [xRange, yRange];
 }
 
 // Draws a single histogram, has to be extended to be good in overlapping
 function drawCircleHistogram(angleData, j, xRange, yRange){
-    var svg = d3.select('#circHist');
+    var svg = d3.select('#cLinePlot');
+    console.log("IM CALLED")
 
     // Just does the grouping
     var intervals = d3.range(0, 2*Math.PI, 2*Math.PI/numBinsCircularHistogram);
@@ -151,6 +158,7 @@ function drawCircleHistogram(angleData, j, xRange, yRange){
 }
 
 function mainCircularHistogram(dataIn){
+    console.log("CALLED")
     var dataPerProtein = [];
     for (let i = 0; i < dataIn.maxNumberOfProteins; i++) {
         dataPerProtein.push([]);

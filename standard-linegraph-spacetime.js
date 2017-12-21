@@ -1,5 +1,4 @@
 function drawLineGraphSpacetime(dataPerProtein, tMin, tMax){
-    console.log(dataPerProtein)
     var bins = [];
     dataPerProtein.forEach(function(el){bins.push(makeBinsLineGraph(el))});
     var xyData = getXYValuesLineGraph(bins);
@@ -23,11 +22,10 @@ function drawLineGraphSpacetime(dataPerProtein, tMin, tMax){
     xes.forEach(function(el){xMax = d3.max(el) > xMax ? d3.max(el) : xMax});
 
 
-    console.log(yMax)
 
-    var vis = d3.select('#visualisation'),
-        WIDTH = 1000,
-        HEIGHT = 500,
+    var vis = d3.select('#spaceTime'),
+        WIDTH = 1500,
+        HEIGHT = 400,
         MARGINS = {
           top: 20,
           right: 20,
@@ -76,7 +74,6 @@ function drawLineGraphSpacetime(dataPerProtein, tMin, tMax){
 }
 
 function mainLineGraphSpacetime(dataIn, tMin, tMax){
-    console.log(dataIn)
     var dataPerProtein = [];
     for (let i = 0; i < dataIn.maxNumberOfProteins; i++) {
         dataPerProtein.push([]);

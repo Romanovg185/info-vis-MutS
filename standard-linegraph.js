@@ -1,3 +1,5 @@
+var numBinsHistogram = 50
+
 function makeBinsLineGraph(positionData){
     var formatCount = d3.format(",.0f");
     var svg = d3.select("svg");
@@ -12,7 +14,7 @@ function makeBinsLineGraph(positionData){
 
     var bins = d3.histogram()
         .domain(x.domain())
-        .thresholds(x.ticks(50))
+        .thresholds(x.ticks(numBinsHistogram))
         (positionData);
     return bins;
 }
@@ -34,7 +36,6 @@ function getXYValuesLineGraph(bins){
 }
 
 function drawLineGraph(dataPerProtein){
-	console.log(dataPerProtein)
     var bins = [];
     dataPerProtein.forEach(function(el){bins.push(makeBinsLineGraph(el))});
     var xyData = getXYValuesLineGraph(bins);
@@ -49,9 +50,9 @@ function drawLineGraph(dataPerProtein){
     xes.forEach(function(el){xMax = d3.max(el) > xMax ? d3.max(el) : xMax});
     ys.forEach(function(el){yMax = d3.max(el) > yMax ? d3.max(el) : yMax});
 
-    var vis = d3.select('#visualisation'),
-        WIDTH = 1000,
-        HEIGHT = 500,
+    var vis = d3.select('#linePlot'),
+        WIDTH = 1500,
+        HEIGHT = 400,
         MARGINS = {
           top: 20,
           right: 20,

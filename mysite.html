@@ -35,9 +35,15 @@
 
 <p>
 	<input type="file" id="files" name="files[]" multiple />
-	<input id="clickMeHist" type="button" value="Histogram" onclick="doFunction();" />
-	<input id="clickMeCircHist" type="button" value="Circular Histogram" onclick="doFunction();" />
-	<input id="clickMeLine" type="button" value="Line" onclick="doFunction();" />
+	<input id="clickMeHist" type="button" value = "Start" onclick="doFunction();">
+	<input id="clickMeLine" type="button" value="Linear DNA" onclick="doFunction();" />
+	<input id="clickMeCircle" type="button" value="Circular DNA" onclick="doFunction();" />
+	<input type="checkbox" id="boxZero" checked><label for="love"> St 0</label>
+	<input type="checkbox" id="boxOne" checked><label for="love"> St 1</label>	
+	<input type="checkbox" id="boxTwo" checked><label for="love"> St 2</label>
+	<input type="checkbox" id="boxThree" checked><label for="love"> St 3</label>
+	<input type="checkbox" id="boxCircular"><label for="love"> Circular DNA</label>
+	<input type="text" id="numBins" name="Number of bins" value="50"><label for="love"> Number of bins </label>
 </p>
 
 <p>
@@ -47,9 +53,14 @@
 	<div id="slider-value" style="display: none;"></div>
 </p>
 
-<svg id="visualisation" width="1000" height="500"></svg>
-<svg id="circHist" width="1000" height="1040"></svg>
-<svg width="1000" height="500"></svg>
+<div id="lineDiv"> 
+	<svg id="linePlot" width="2000" height="440"></svg>
+	<svg id="spaceTime" width="2000" height="440"></svg>
+</div>
+<div id="circleDiv">
+	<svg id="cLinePlot" width="850" height="850"></svg>
+	<svg id="cSpaceTime" width="850" height="850" transform="translate(1,-1)"></svg>
+</div>
 
 
 <output id="list"></output>
@@ -57,6 +68,7 @@
 <script type="text/javascript" src="standard-histogram.js" charset="utf-8"></script>
 <script type="text/javascript" src="circle-linegraph.js" charset="utf-8"></script>
 <script type="text/javascript" src="standard-linegraph.js" charset="utf-8"></script>
-
+<script type="text/javascript" src="standard-linegraph-spacetime.js" charset="utf-8"></script>
+<script type="text/javascript" src="circle-linegraph-spacetime.js" charset="utf-8"></script>
 </body>
 </html>

@@ -1,7 +1,10 @@
-var data = new Array
-var tmin = 0.0
-var tmax = 30.0
-var isShowingStates = [true, true, true, true]
+var data = new Array;
+var tmin = 0.0;
+var tmax = 30.0;
+var isShowingStates = [true, true, true, true];
+var isDataCircular = false;
+var numBinsHistogram = 50;
+var numBinsCircularHistogram = 50;
 
 // Generates a datapoint from a line in the preprocessed code
 // using the constructor from data-point-classdef.js
@@ -64,16 +67,23 @@ document.getElementById("clickMeHist").onclick = function() {
 
 }
 
-document.getElementById("clickMeCircHist").onclick = function() {
-	var bar = data[0].timeIntervalSlice(3, 18);
-	mainCircularHistogram(bar);
+document.getElementById("clickMeCircle").onclick = function() {
+	isDataCircular = true;
+    var mySVG = document.getElementById("circleDiv");
+    mySVG.style.display="inline";
+    var mySVG = document.getElementById("lineDiv");
+    mySVG.style.display="none";
+	master(null, null);
 }
 
 document.getElementById("clickMeLine").onclick = function() {
-	var foo = data[0].timeIntervalSlice(5, 15);
-	mainLineGraph(foo);
+	isDataCircular = false;
+    var mySVG = document.getElementById("circleDiv");
+    mySVG.style.display="none";
+    var mySVG = document.getElementById("lineDiv");
+    mySVG.style.display="inline";
+	master(null, null)
 }
-
 // Change globals if button changes
 document.getElementById('boxZero').onclick = function() {
     if (this.checked){
@@ -134,6 +144,8 @@ $( "#slider-value").on( "change", function( event, ui, data) {
 
 // Master function called on change slider or change checkbox
 function master(event, ui){
+    numBinsHistogram = parseInt(document.getElementById('numBins').value);
+    numBinsCircularHistogram = numBinsHistogram;
     var foo = data[0].timeIntervalSlice(
 		$( "#slider-range" ).slider( "values", 0 ),
 		$( "#slider-range" ).slider( "values", 1 )
@@ -141,10 +153,17 @@ function master(event, ui){
     var statesOfRelevance = []
     isShowingStates.forEach(function(el, i){if(el == true)statesOfRelevance.push(i);});
     foo = foo.stateSlice(statesOfRelevance);
-	d3.select("#circHist").selectAll("*").remove(); // TODO does not work properly for the circular histogram
-	d3.select('#visualisation').selectAll("*").remove();
-	mainCircularHistogramSpacetime(foo, $( "#slider-range" ).slider( "values", 0 ), $( "#slider-range" ).slider( "values", 1 ));
-	mainLineGraphSpacetime(foo, $( "#slider-range" ).slider( "values", 0 ), $( "#slider-range" ).slider( "values", 1 ));
+	d3.select("#spaceTime").selectAll("*").remove(); // TODO does not work properly for the circular histogram
+	d3.select('#linePlot').selectAll("*").remove();
+    d3.select("#cSpaceTime").selectAll("*").remove(); // TODO does not work properly for the circular histogram
+	d3.select('#cLinePlot').selectAll("*").remove();
+	if(isDataCircular){
+        mainCircularHistogram(foo);
+        mainCircularHistogramSpacetime(foo, $( "#slider-range" ).slider( "values", 0 ), $( "#slider-range" ).slider( "values", 1 ));
+	} else {
+	    mainLineGraph(foo);
+        mainLineGraphSpacetime(foo, $( "#slider-range" ).slider( "values", 0 ), $( "#slider-range" ).slider( "values", 1 ));
+	}
 }
 
 
