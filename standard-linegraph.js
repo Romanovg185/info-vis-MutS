@@ -1,5 +1,3 @@
-var numBinsHistogram = 50
-
 function makeBinsLineGraph(positionData){
     var formatCount = d3.format(",.0f");
     var svg = d3.select("svg");
@@ -65,8 +63,24 @@ function drawLineGraph(dataPerProtein){
         yRange = d3.scaleLinear()
             .range([HEIGHT - MARGINS.top, MARGINS.bottom])
             .domain([0, yMax]),
-        xAxis = d3.axisBottom(xRange).tickFormat(function(d){ return d.x;});
+        xAxis = d3.axisBottom(xRange);
         yAxis = d3.axisRight(yRange);
+
+        // Labels and axes
+        vis.append("text")
+            .attr("x", function(d) { return xRange(0); })
+            .attr("y", function(d) { return 411})
+            .text( function (d) { return "Distance from mismatch (kilobases)" })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "20px")
+
+        vis.append("text")
+            .attr("x", function(d) { return 0; })
+            .attr("y", function(d) {return 200 })
+            .text( function (d) { return "Frequency" })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "20px")
+            .attr("transform", "rotate(-90)translate(-220,-170)")
 
         vis.append('svg:g')
         .attr('class', 'x axis')
@@ -98,6 +112,8 @@ function drawLineGraph(dataPerProtein){
             .attr('stroke-width', 2)
             .attr('fill', 'none');
     }
+
+
 }
 
 function mainLineGraph(dataIn){

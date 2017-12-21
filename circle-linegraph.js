@@ -66,23 +66,18 @@ function getRangesCircleHistogram(angleData){
     yRange = d3.scaleLinear()
         .range([HEIGHT - MARGINS.top, MARGINS.bottom])
         .domain([-1*maxRadius, maxRadius]);
-    return [xRange, yRange];
+    return [xRange, yRange, maxRadius];
 }
 
 // Draws a single histogram, has to be extended to be good in overlapping
-function drawCircleHistogram(angleData, j, xRange, yRange){
+function drawCircleHistogram(angleData, j, xRange, yRange, maxRadius){
     var svg = d3.select('#cLinePlot');
-    console.log("IM CALLED")
 
     // Just does the grouping
     var intervals = d3.range(0, 2*Math.PI, 2*Math.PI/numBinsCircularHistogram);
     var dataCircularIncomplete = d3.histogram()
         .thresholds(intervals)
         (angleData);
-
-    if (j == 3){
-        console.log(dataCircularIncomplete)
-    }
 
     // Uses the length of the grouped arrays to determine the real histogram
     dataCircular = [];
@@ -107,9 +102,6 @@ function drawCircleHistogram(angleData, j, xRange, yRange){
     var lineData = centroidPoints;
     lineData.push(centroidPoints[0]);
 
-    if (j == 3){
-        console.log(centroidPoints);
-    }
 
 
     var lineFunc = d3.line()
@@ -118,15 +110,23 @@ function drawCircleHistogram(angleData, j, xRange, yRange){
 
 
     // Circles axes
-    for(var i = 0; xRange(25*i) - xRange(0) + innerRadius < WIDTH/2; i++){
-        svg.append("circle")
-            .attr("cx", xRange(0))
-            .attr("cy", yRange(0))
-            .attr("r", (innerRadius - 5 + xRange(25*i) - xRange(0)))
-          .style("fill", "none")
-          .style("stroke", "#b1a7a7")
-          .style("stroke-dasharray", "1,2")
-          .style("stroke-width",".5px");
+    var a = 0
+    for(var i = 0; xRange(25*i) - xRange(0) + innerRadius < maxRadius; i++){
+        a++ // Dummy to keep doing something during this loop
+//        svg.append("circle")
+//            .attr("cx", xRange(0))
+//            .attr("cy", yRange(0))
+//            .attr("r", (innerRadius - 5 + xRange(25*i) - xRange(0)))
+//          .style("fill", "none")
+//          .style("stroke", "#b1a7a7")
+//          .style("stroke-dasharray", "1,2")
+//          .style("stroke-width",".5px");
+//        svg.append("text")
+//            .attr("x", function(d) { return 425; })
+//            .attr("y", function(d) { return innerRadius - 5 + xRange(25*i) - xRange(0); })
+//            .text( function (d) { return 25*i })
+//            .attr("font-family", "sans-serif")
+//            .attr("font-size", "20px")
     }
 
     // Spokes axes
@@ -147,6 +147,17 @@ function drawCircleHistogram(angleData, j, xRange, yRange){
         .style("stroke-width",".5px")
         .attr('fill', 'none');
 
+    // Circles axes
+    for(var i = 0; innerRadius - 5 + xRange(100*i) - xRange(0) < yRange(spokeLength/10); i++){
+        svg.append("circle")
+            .attr("cx", xRange(0))
+            .attr("cy", yRange(0))
+            .attr("r", innerRadius - 5 + xRange(100*i) - xRange(0))
+          .style("fill", "none")
+          .style("stroke", "#b1a7a7")
+          .style("stroke-dasharray", "1,2")
+          .style("stroke-width",".5px");
+    }
 
     // Draw histogram
     svg.append('svg:path')
@@ -155,15 +166,20 @@ function drawCircleHistogram(angleData, j, xRange, yRange){
         .attr('stroke-width', 2)
         .attr('fill', 'none');
 
+     var yAxis = d3.axisLeft()
+        .scale(xRange)
+        .ticks(10)
+        .tickFormat(d3.format(".0s"));
+
+    svg.append("g").attr("class", "axis").call(yAxis);
+
 }
 
 function mainCircularHistogram(dataIn){
-    console.log("CALLED")
     var dataPerProtein = [];
     for (let i = 0; i < dataIn.maxNumberOfProteins; i++) {
         dataPerProtein.push([]);
     }
-    console.log(dataPerProtein.length)
     // While determining the min/max position values, get the positions in a form of datapoint per protein
     for (let key in dataIn.data){
         let i = 0;
@@ -176,9 +192,6 @@ function mainCircularHistogram(dataIn){
             if (myPosition < minValue){
                 minValue = myPosition;
             }
-//            console.log(key)
-//            console.log("belonging to")
-//            console.log(i)
             dataPerProtein[i].push(myPosition); //Glug glug glug, delicious Kool-Aid
             i++;
         }
@@ -186,6 +199,6 @@ function mainCircularHistogram(dataIn){
     var angleData = makeDataIntoAngles(dataPerProtein);
     var ranges = getRangesCircleHistogram(angleData)
     for(let i = 0; i < angleData.length; i++){
-        drawCircleHistogram(angleData[i], i, ranges[0], ranges[1]);
+        drawCircleHistogram(angleData[i], i, ranges[0], ranges[1], ranges[2]);
     }
 }
