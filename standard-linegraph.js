@@ -34,16 +34,17 @@ function getXYValuesLineGraph(bins){
 }
 
 function drawLineGraph(dataPerProtein){
+    // Bins the data to plot
     var bins = [];
     dataPerProtein.forEach(function(el){bins.push(makeBinsLineGraph(el))});
     var xyData = getXYValuesLineGraph(bins);
     var xes = xyData[0];
     var ys = xyData[1];
 
+    // Finds extremes data and therefore data domain
     var xMin = 4294967295;
     var xMax = -4294967295;
     var yMax = 0;
-
     xes.forEach(function(el){xMin = d3.min(el) < xMin ? d3.min(el) : xMin});
     xes.forEach(function(el){xMax = d3.max(el) > xMax ? d3.max(el) : xMax});
     ys.forEach(function(el){yMax = d3.max(el) > yMax ? d3.max(el) : yMax});
@@ -73,7 +74,6 @@ function drawLineGraph(dataPerProtein){
             .text( function (d) { return "Distance from mismatch (kilobases)" })
             .attr("font-family", "sans-serif")
             .attr("font-size", "20px")
-
         vis.append("text")
             .attr("x", function(d) { return 0; })
             .attr("y", function(d) {return 200 })
@@ -81,39 +81,31 @@ function drawLineGraph(dataPerProtein){
             .attr("font-family", "sans-serif")
             .attr("font-size", "20px")
             .attr("transform", "rotate(-90)translate(-220,-170)")
-
         vis.append('svg:g')
         .attr('class', 'x axis')
         .attr('transform', 'translate(0,' + (HEIGHT - MARGINS.bottom) + ')')
         .call(xAxis);
-
         vis.append('svg:g')
         .attr('class', 'y axis')
         .attr('transform', 'translate(' + (MARGINS.left) + ',0)')
         .call(yAxis);
 
-
+    // Drawing itself
     for (let h = 0; h < xes.length; h++){
         var dataD3CanRead = []
         for (let i = 0; i < xes[h].length; i++){
             dataD3CanRead.push({x: xes[h][i], y: ys[h][i]});
         }
-
         var lineData = dataD3CanRead;
-
-
         var lineFunc = d3.line()
             .x(function(d) { return xRange(d.x);})
             .y(function(d) { return yRange(d.y);});
-
         vis.append('svg:path')
             .attr('d', lineFunc(lineData))
             .attr('stroke', colorDict[h])
             .attr('stroke-width', 2)
             .attr('fill', 'none');
     }
-
-
 }
 
 function mainLineGraph(dataIn){
@@ -124,17 +116,15 @@ function mainLineGraph(dataIn){
     // While determining the min/max position values, get the positions in a form of datapoint per protein
     for (let key in dataIn.data){
         let i = 0;
-        for (let protein in dataIn.data[key].positions){
-            //Note the potential confusion factor here, I divide by 100 for some reason...
-            // QQ something to do with index 3000 @ 30 sec timestep?
-            let myPosition = dataIn.data[key].positions[protein].position/100; //Suspicious division by 100
+        for (let protein in dataIn.data[key].positions){s
+            let myPosition = dataIn.data[key].positions[protein].position/100; // Note division by 100
             if (myPosition > maxValue){
                 maxValue = myPosition;
             }
             if (myPosition < minValue){
                 minValue = myPosition;
             }
-            dataPerProtein[i].push(myPosition); //Glug glug glug, delicious Kool-Aid
+            dataPerProtein[i].push(myPosition); 
             i++;
         }
     }
