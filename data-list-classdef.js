@@ -1,7 +1,7 @@
 function DataList(dl) {
 	this.data = {}; // Data is stored as a "dictionary" of timestep : DataPoint
 	this.size = 0;
-	this.timestamps = new Array();
+	this.timestamps = new Array(); // Identical to storing keys seperately 
 	let i = 0;
 	for (let point of dl){
 		this.timestamps.push(point.timestep)
@@ -12,12 +12,12 @@ function DataList(dl) {
 			this.maxNumberOfProteins = point.nMutS;
 		}
 	}
-	// TODO : returns NaN instead of 30.0 ??
+	
+	// Getters for minimum time and maximum time, setters are not neccesary
 	this.tmin = function(){
 		let tmin_ = Math.min(...this.timestamps);
 		return tmin_;
 	}
-
 	this.tmax = function(){
 		var tmax_ = Math.max(...this.timestamps);
 		return tmax_;
@@ -36,8 +36,9 @@ function DataList(dl) {
 		return new DataList(ret);
 	}
 
-  this.stateSlice = function(states){
-      let ret = new DataList([])
+	// Return a new DataSet object containing only proteins of the right state
+  	this.stateSlice = function(states){
+    	let ret = new DataList([])
 	    for (let k in this.data){
 	        var currentTimestep = this.data[k].timestep;
             var currentNGATC = this.data[k].nGATC;
@@ -70,6 +71,7 @@ function DataList(dl) {
 
 }
 
+// Not a method of DataList, but kept here for convenience
 function findMaxNumberOfProteins(dataList){
     var maxNumberOfProteins = 0
     for (let k in dataList.data){
