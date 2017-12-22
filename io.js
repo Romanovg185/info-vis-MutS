@@ -7,6 +7,7 @@ var numBinsHistogram = 50;
 var numBinsCircularHistogram = 50;
 var showingProteins = [];
 var n_max_protein = 0;
+var colorDict = ["magenta", "purple", "blue", "cyan", "green", "yellow", "orange", "red"];
 
 // Generates a datapoint from a line in the preprocessed code
 // using the constructor from data-point-classdef.js
@@ -61,26 +62,50 @@ function Initial_Legend(d_o) {
 		showingProteins.push(true);
 	}
 	var sPT =  d3.zip(showingProteins)
-	var tr = d3.select("#Legend_cont")
-  			.append("table")
-  			.selectAll("tr")
+	var ts = d3.select("#Legend_cont")
+  			.append("svg")
+  			.attr("position", "relative")
+  			.attr("height", 800)
+  			.attr("width", 300);
+  			
+  	var tg = ts.selectAll("svg")
   			.data(sPT)
-  			.enter().append("tr");
+  			.enter().append("g")
+    		.attr("class", "legendrect");
 
-		var td = tr.selectAll("td")
-  			.data(function(d, i) { return i; })
-  			.enter().append("td")
-  			.attr('fill', colorDict[i])
-  			.attr('stroke', #FFFFFF)
-            .attr('stroke-width', 2)
-    		.text(function(d, i) { return "Protein "+i; });
-	}
-	console.log(showingProteins)
-};
+	tg.append("svg:text")
+			.attr("display", "inline-block")
+			.attr("font-weight", 10)
+			.attr("x", 300)
+			.attr("y", function(d, i){ return i*30;})
+			.attr("dy", 40)
+			// .attr("position", "relative")
+			.attr("width", 180)
+			.attr("height", 40)
+			.attr("padding", 1)
+			.attr("class", "legendtext")
+			.attr("text", function(d, i){
+				var ptxt = "Protein ";
+				var protein_no = String(i);
+				var divmarker =  " | ";
+				var color_str = String(colorDict[i]);
+				return ptxt+protein_no+divmarker+color_str;});
 
-function Legend_Update(d_o, mask) {
+    tg.append("rect")
+			.attr("display", "inline-block")
+        	.attr("x", 10)
+    		.attr("y", function(d, i){ return i*30;})
+    		.attr("position", "relative")
+    		.attr("width", 80)
+    		.attr("height", 20)
+    		.attr("fill", function(d, i){ return String(colorDict[i]);});
 
 }
+	
+
+// function Legend_Update(d_o, mask) {
+
+// }
 
 
 document.getElementById('files').addEventListener('change', handleFileSelect, false);

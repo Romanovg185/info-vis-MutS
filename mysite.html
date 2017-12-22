@@ -36,6 +36,10 @@ p {
 	padding: 3px;
 	}
 
+g {
+	height: x200px;
+}
+
 .right-cont{
 	position: relative;
 	float: right;
@@ -65,15 +69,24 @@ p {
 	padding: 10px;
 }
 
+.legendrect {
+/*	font: 12px sans-serif;
+	padding: 10px;*/
+}
+.legendtext{
+	right: 10px;
+}
+
+
 
 </style>
 
 <nav>
 	<div class="navbars">
 		<div class="right-cont">
-			<input id="clickMeHist" type="button" value ="Start" onclick="doFunction();"/>
-			<input id="clickMeLine" type="button" value="Linear DNA" onclick="doFunction();" />
-			<input id="clickMeCircle" type="button" value="Circular DNA" onclick="doFunction();" />
+			<input id="clickMeHist" type="button" value ="Start" onclick="doFunction()"/>
+			<input id="clickMeLine" type="button" value="Linear DNA" onclick="doFunction()" />
+			<input id="clickMeCircle" type="button" value="Circular DNA" onclick="doFunction()" />
 		</div>
 		<div class="left-menu">
 			<input type="file" id="files" name="files[]" multiple/>
@@ -102,13 +115,12 @@ p {
 		<div id="slider-value" style="display: none;"></div>
 	</div>
 </nav>
-
-<section>
-	<aside id="Legend_cont" style="float: right; height: 100%;">
+<aside id="Legend_cont" style="float: right; height: 800px">
 <!-- 		<div id="Legenda">
 			<svg id="LegendaPlot" width="200" height="850"></svg>
 		</div> -->
-	</aside>
+</aside>
+<article>
 	<div>
 		<div id="lineDiv"> 
 			<svg id="linePlot" width="2000" height="440"></svg>
@@ -120,7 +132,7 @@ p {
 		</div>
 	</div>
 
-</section>
+</article>
 
 
 
