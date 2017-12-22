@@ -1,5 +1,5 @@
 function DataPoint(timestep, nGATC, nMutS, states_array, positions_array){
-	this.timestep = Number(timestep);
+	this.timestep = Number(timestep);  //Due to JS preferring the String datatype over almost everything, I want to cast to Number to be sure
 	this.nGATC = Number(nGATC);
 	this.nMutS = Number(nMutS);
 	this.nickingStates = Array();
