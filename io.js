@@ -7,7 +7,8 @@ var numBinsHistogram = 50;
 var numBinsCircularHistogram = 50;
 var showingProteins = [];
 var n_max_protein = 0;
-var colorDict = ["magenta", "purple", "blue", "cyan", "green", "yellow", "orange", "red"];
+var legend_status = true;
+var colorDict = ["pink", "purple", "blue", "lightblue", "green", "yellow", "orange", "red"];
 
 // Generates a datapoint from a line in the preprocessed code
 // using the constructor from data-point-classdef.js
@@ -62,60 +63,114 @@ function Initial_Legend(d_o) {
 		showingProteins.push(true);
 	}
 	var sPT =  d3.zip(showingProteins)
-	var ts = d3.select("#Legend_cont")
-  			.append("svg")
-  			.attr("position", "relative")
-  			.attr("height", 800)
-  			.attr("width", 300);
+	// var ts = d3.select("#Legend_cont")
+ //  			.append("svg")
+ //  			.attr("position", "relative")
+ //  			.attr("height", 800)
+ //  			.attr("left", 1)
+ //  			.attr("width", 100);
   			
-  	var tg = ts.selectAll("svg")
-  			.data(sPT)
-  			.enter().append("g")
-    		.attr("class", "legendrect");
+ //  	var tg = ts.selectAll("svg")
+ //  			.data(sPT)
+ //  			.enter().append("g")
+ //    		.attr("class", "legendrect")
+ //    		.attr("float", "left");
 
-	tg.append("svg:text")
-			.attr("display", "inline-block")
-			.attr("font-weight", 10)
-			.attr("x", 300)
-			.attr("y", function(d, i){ return i*30;})
-			.attr("dy", 40)
+    var tb_c = d3.select("#Legend_cont")
+   			.append("table")
+   			.attr("right", 10);
+
+
+   	var tb = tb_c.selectAll("table")
+   			.data(sPT)
+   			.enter().append("tr")
+   			.attr("class", "legend-tr")
+   			.attr("id", function(d, i){ return String(colorDict[i]);})
+   			.attr("style", function(d, i){ return "background: "+String(colorDict[i])+";";});
+
+	var tt = tb.append("text")
+			// .attr("x", 300)
+			// .attr("y", function(d, i){ return i*30;})
+			// .attr("dy", 40)
+			.attr("style", "font-family: sans-serif;" )
+			.attr("style", "font-size: 12px;" )
+			.attr("style", "fill: black" )
 			// .attr("position", "relative")
-			.attr("width", 180)
-			.attr("height", 40)
-			.attr("padding", 1)
 			.attr("class", "legendtext")
-			.attr("text", function(d, i){
+			.text(function(d, i){
 				var ptxt = "Protein ";
 				var protein_no = String(i);
 				var divmarker =  " | ";
 				var color_str = String(colorDict[i]);
 				return ptxt+protein_no+divmarker+color_str;});
 
-    tg.append("rect")
-			.attr("display", "inline-block")
-        	.attr("x", 10)
-    		.attr("y", function(d, i){ return i*30;})
-    		.attr("position", "relative")
-    		.attr("width", 80)
-    		.attr("height", 20)
-    		.attr("fill", function(d, i){ return String(colorDict[i]);});
+    // tg.append("rect")
+    //     	.attr("x", 10)
+    // 		.attr("y", function(d, i){ return i*30;})
+    // 		.attr("position", "relative")
+    // 		.attr("width", 80)
+    // 		.attr("height", 20)
+    // 		.attr("fill", function(d, i){ return String(colorDict[i]);});
 
 }
 	
 
-// function Legend_Update(d_o, mask) {
+function Legend_Update(b){
+	var color_set = [];
+	var color_select = [];
+	var nodes = [];
+	var SVGs = d3.selectAll(".plots");
+	for (let node in SVGs.entries) {
+		nodes.push(node);
+	};
+	console.log(nodes)
+	var subSVG = SVGs.selectAll("*");
+	// console.log(subSVG);
+	var svg_obj_arr = subSVG._groups[0];
+	console.log(svg_obj_arr);
+	svg_obj_arr.forEach(function(d){
+		var stroke_color = d3.select(d).attr("stroke");
+   		color_select.push(stroke_color);
+   	});
 
-// }
+   	for (let i in color_select){
+   		let clr = color_select[i];
+   		if (clr != null && clr != 0 && clr != "#000"){
+			color_set.push(clr);
+   		} else {
+   			continue;
+   		};
+   	}
+   	console.log(color_set);
+   	var really_a_set = new Set(color_set);
+   	var output_c = [];
+   	// var back_to_array = Array(really_a_set)
+   	really_a_set.forEach(function(d){
+   		let polm = "#";
+   		let kleur = String(d);
+   		output_c.push(polm+kleur);
+   		let sel_id = d3.select(polm+kleur)
+   			.attr("style", "opacity: 0");
+   	});
+
+}
+
+
+
+
 
 
 document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
 // initiate slider after clicking on Histogram button TODO improve UI
-document.getElementById("clickMeHist").onclick = function() {
+document.getElementById("clickMeHist").onclick = function(){
 	tmin = data[0].tmin(); // create new tmin and tmax values
 	tmax = data[0].tmax();
-	Initial_Legend(data[0])
-	$( "#slider-value").trigger('change'); // initiates slider after event change
+	if (legend_status == true){
+		Initial_Legend(data[0]);
+		legend_status = false;
+	}
+	$("#slider-value").trigger('change'); // initiates slider after event change
 }
 
 document.getElementById("clickMeCircle").onclick = function() {
@@ -193,6 +248,10 @@ $( "#slider-value").on( "change", function( event, ui, data) {
 	} );
 } );
 
+$(".legend-tr").on("change", function(){ console.log("event");});
+
+
+
 // Master function called on change slider or change checkbox
 function master(event, ui){
     numBinsHistogram = parseInt(document.getElementById('numBins').value);
@@ -215,8 +274,8 @@ function master(event, ui){
 	    mainLineGraph(foo);
         mainLineGraphSpacetime(foo, $( "#slider-range" ).slider( "values", 0 ), $( "#slider-range" ).slider( "values", 1 ));
 	}
+	console.log(Legend_Update(true));
 }
 
 
-$( "#slider-range" ).on( "slidestop", master
-	);
+$( "#slider-range" ).on( "slidestop", master);

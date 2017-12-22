@@ -69,18 +69,18 @@ g {
 	padding: 10px;
 }
 
-.legendrect {
-/*	font: 12px sans-serif;
-	padding: 10px;*/
+.legend-tr {
+	opacity: 0.5;
 }
+
 .legendtext{
-	right: 10px;
+	padding: 10px;
 }
 
 
 
 </style>
-
+<div id="legend_trigger" style="display: none;"></div>
 <nav>
 	<div class="navbars">
 		<div class="right-cont">
@@ -115,7 +115,7 @@ g {
 		<div id="slider-value" style="display: none;"></div>
 	</div>
 </nav>
-<aside id="Legend_cont" style="float: right; height: 800px">
+<aside id="Legend_cont" style="float: right;">
 <!-- 		<div id="Legenda">
 			<svg id="LegendaPlot" width="200" height="850"></svg>
 		</div> -->
@@ -123,12 +123,12 @@ g {
 <article>
 	<div>
 		<div id="lineDiv"> 
-			<svg id="linePlot" width="2000" height="440"></svg>
-			<svg id="spaceTime" width="2000" height="440"></svg>
+			<svg id="linePlot" class = "plots" width="2000" height="440" style="overflow: visible;"></svg>
+			<svg id="spaceTime" class = "plots" width="2000" height="440"></svg>
 		</div>
 		<div id="circleDiv">
-			<svg id="cLinePlot" width="850" height="850"></svg>
-			<svg id="cSpaceTime" width="850" height="850" transform="translate(1,-1)"></svg>
+			<svg id="cLinePlot" class = "plots" width="850" height="850"></svg>
+			<svg id="cSpaceTime" class = "plots" width="850" height="850" transform="translate(1,-1)"></svg>
 		</div>
 	</div>
 
