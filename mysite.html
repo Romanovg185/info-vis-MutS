@@ -24,14 +24,117 @@
   fill: steelblue;
 }*/
 
-.bar text {
-  fill: #fff;
-  font: 10px sans-serif;
+body {
+	fill: #fff;
+	font: 12px sans-serif;
+	height: 1;
+	margin: 0px;
+}
+
+p {
+	margin: 2px;
+	padding: 3px;
+	}
+
+g {
+	height: x200px;
+}
+
+.right-cont{
+	position: relative;
+	float: right;
+	margin-right: 10px;
+	margin-left: 30px;
+}
+
+.left-cont{
+
+}
+
+.center_cont{
+	vertical-align: middle;
+}
+
+.navbars{
+	position: relative;
+	width: 100%;
+	max-width: 600px;
+	margin: 2px;
+	padding: 3px;
+}
+
+.sliderbars{
+	position: relative;
+	max-width: 100%;
+	padding: 10px;
+}
+
+.legend-tr {
+	opacity: 0.5;
+	padding: 10px;
+	margin: 5px;
+}
+
+.legendtext{
+	padding: 10px;
 }
 
 
-</style>
 
+</style>
+<div id="legend_trigger" style="display: none;"></div>
+<nav>
+	<div class="navbars">
+		<div class="right-cont">
+			<input id="clickMeHist" type="button" value ="Start" onclick="doFunction()"/>
+			<input id="clickMeLine" type="button" value="Linear DNA" onclick="doFunction()" />
+			<input id="clickMeCircle" type="button" value="Circular DNA" onclick="doFunction()" />
+		</div>
+		<div class="left-menu">
+			<input type="file" id="files" name="files[]" multiple/>
+		</div>
+
+	</div>
+	<div class="navbars">
+		<div class="right-cont">
+			<label for="love"> Number of bins: </label><input type="text" id="numBins" name="Number of bins" style="border:1 ; padding: 1px; margin 2px;" value="50">
+		</div>
+		<div class="left-cont">
+			<input type="checkbox" id="boxZero" checked><label for="love"> State 0</label>
+			<input type="checkbox" id="boxOne" checked><label for="love"> State 1</label>	
+			<input type="checkbox" id="boxTwo" checked><label for="love"> State 2</label>
+			<input type="checkbox" id="boxThree" checked><label for="love"> State 3</label>
+		</div>
+		<!-- <input type="checkbox" id="boxCircular"><label for="love"> Circular DNA</label> -->
+	</div>
+	<div class="sliderbars">
+		<div class="center-cont">
+			<label>Time range: </label><input type="text" id="timerange" readonly>
+		</div>
+	</div>
+	<div class="sliderbars">
+		<div id="slider-range"></div>
+		<div id="slider-value" style="display: none;"></div>
+	</div>
+</nav>
+<aside id="Legend_cont" style="float: right;">
+<!-- 		<div id="Legenda">
+			<svg id="LegendaPlot" width="200" height="850"></svg>
+		</div> -->
+</aside>
+<article>
+	<div>
+		<div id="lineDiv"> 
+			<svg id="linePlot" class = "plots" width="2000" height="440" style="overflow: visible;"></svg>
+			<svg id="spaceTime" class = "plots" width="2000" height="440"></svg>
+		</div>
+		<div id="circleDiv">
+			<svg id="cLinePlot" class = "plots" width="850" height="850"></svg>
+			<svg id="cSpaceTime" class = "plots" width="850" height="850" transform="translate(1,-1)"></svg>
+		</div>
+	</div>
+
+</article>
 
 <p>
 	<input type="file" id="files" name="files[]" multiple />
@@ -60,6 +163,7 @@
 	<svg id="cLinePlot" width="850" height="850"></svg>
 	<svg id="cSpaceTime" width="850" height="850" transform="translate(1,-1)"></svg>
 </div>
+
 
 
 <output id="list"></output>
