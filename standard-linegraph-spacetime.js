@@ -15,12 +15,22 @@ function drawLineGraphSpacetime(dataPerProtein, tMin, tMax){
 
     var xMin = 4294967295;
     var xMax = -4294967295;
-    var yMin = tMin;
-    var yMax = tMax;
+    var yMin = 4294967295;
+    var yMax = -4294967295;
+
 
     xes.forEach(function(el){xMin = d3.min(el) < xMin ? d3.min(el) : xMin});
     xes.forEach(function(el){xMax = d3.max(el) > xMax ? d3.max(el) : xMax});
-
+    for(let i = 0; i < ys.length; i++){
+        for(let j = 0; j < ys[i].length; j++){
+            if(parseFloat(ys[i][j]) < yMin){
+                yMin = parseFloat(ys[i][j]);
+            }
+            if(parseFloat(ys[i][j]) > yMax){
+                yMax = parseFloat(ys[i][j]);
+            }
+        }
+    }
 
 
     var vis = d3.select('#spaceTime'),
@@ -38,8 +48,24 @@ function drawLineGraphSpacetime(dataPerProtein, tMin, tMax){
         yRange = d3.scaleLinear()
             .range([HEIGHT - MARGINS.top, MARGINS.bottom])
             .domain([yMin, yMax]),
-        xAxis = d3.axisBottom(xRange).tickFormat(function(d){ return d.x;});
+        xAxis = d3.axisBottom(xRange);
         yAxis = d3.axisRight(yRange);
+
+
+        // Labels and axes
+        vis.append("text")
+            .attr("x", function(d) { return xRange(0); })
+            .attr("y", function(d) { return 411})
+            .text( function (d) { return "Distance from mismatch (kilobases)" })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "20px")
+        vis.append("text")
+            .attr("x", function(d) { return 0; })
+            .attr("y", function(d) {return 200 })
+            .text( function (d) { return "Time (seconds)" })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "20px")
+            .attr("transform", "rotate(-90)translate(-220,-170)")
 
         vis.append('svg:g')
         .attr('class', 'x axis')

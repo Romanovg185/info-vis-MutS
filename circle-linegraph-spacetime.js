@@ -2,6 +2,7 @@ var minValue = 4294967295;
 var maxValue = -4294967295;
 var numBinsCircularHistogram = 40;
 var innerRadius = 50;
+var rMin = 4294967295;
 
 var viewWidth = window.innerWidth;
 var viewHeight = window.innerHeight;
@@ -43,23 +44,35 @@ function getRangesCircleHistogramSpacetime(timeData, angleData, startTime, endTi
         }
         maxRadiusList.push(maxOfProt);
     }
+
+    var rMax = -4294967295;
+    rMin = 4294967295; // reset the global variable
+    var ys = timeData
+    for(let i = 0; i < ys.length; i++){
+        if(parseFloat(ys[i][0]) < rMin){
+            rMin = ys[i][0]
+        }
+        if(parseFloat(ys[i][ys[i].length - 1]) > rMax){
+            rMax = ys[i][ys[i].length - 1];
+        }
+    }
     var xRange = d3.scaleLinear()
         .range([MARGINS.left, WIDTH - MARGINS.right])
-        .domain([-1*endTime, endTime]),
+        .domain([-1*(rMax-rMin), (rMax-rMin)]),
     yRange = d3.scaleLinear()
         .range([HEIGHT - MARGINS.top, MARGINS.bottom])
-        .domain([-1*endTime, endTime]);
-    return [xRange, yRange];
+        .domain([-1*(rMax-rMin), (rMax-rMin)]);
+    return [xRange, yRange, rMax];
 }
 
 // Draws a single histogram, has to be extended to be good in overlapping
-function drawCircleHistogramSpacetime(angleData, timeData, j, xRange, yRange){
+function drawCircleHistogramSpacetime(angleData, timeData, j, xRange, yRange, maxRadius){
     var svg = d3.select('#cSpaceTime');
     var centroidPoints = [];
     for(let i = 0; i < angleData.length; i++){
         var startAngle = 2*Math.PI*i/numBinsCircularHistogram;
-        var x = (timeData[i]) * Math.cos(angleData[i]);
-        var y = (timeData[i]) * Math.sin(angleData[i]);
+        var x = (timeData[i] - rMin) * Math.cos(angleData[i]);
+        var y = (timeData[i] - rMin) * Math.sin(angleData[i]);
         centroidPoints.push({x: x, y: y});
     }
 
@@ -71,21 +84,39 @@ function drawCircleHistogramSpacetime(angleData, timeData, j, xRange, yRange){
         .y(function(d) {return yRange(d.y);});
 
 
-    // Circles axes
-    var WIDTH = 1000;
-    for(var i = 0; xRange(i) < WIDTH; i++){
-        svg.append("circle")
-            .attr("cx", xRange(0))
-            .attr("cy", yRange(0))
-            .attr("r", 25*i)
-          .style("fill", "none")
-          .style("stroke", "#b1a7a7")
-          .style("stroke-dasharray", "1,2")
-          .style("stroke-width",".5px");
-    }
+//    // Circles axes
+//    var WIDTH = 1000;
+//    for(var i = 0; xRange(i) < WIDTH; i++){
+//        svg.append("circle")
+//            .attr("cx", xRange(0))
+//            .attr("cy", yRange(0))
+//            .attr("r", 25*i)
+//          .style("fill", "none")
+//          .style("stroke", "#b1a7a7")
+//          .style("stroke-dasharray", "1,2")
+//          .style("stroke-width",".5px");
+//    }
+//
+//    // Spokes axes
+//    var spokeLength = innerRadius - 5 + xRange(25*i) - xRange(0);
+//    var spokePoints = [];
+//    for(let i = 0; i< numBinsCircularHistogram; i++){
+//        var startAngle = 2*Math.PI*i/numBinsCircularHistogram;
+//        var endAngle = 2*Math.PI*(i+1)/numBinsCircularHistogram;
+//        var x = spokeLength * Math.cos((endAngle + startAngle)/2);
+//        var y = spokeLength * Math.sin((endAngle + startAngle)/2);
+//        spokePoints.push({x:x, y:y});
+//        spokePoints.push({x:0, y:0});
+//    }
+//    svg.append('svg:path')
+//        .attr('d', lineFunc(spokePoints))
+//        .style("stroke", "#b1a7a7")
+//        .style("stroke-dasharray", "2,2")
+//        .style("stroke-width",".5px")
+//        .attr('fill', 'none');
 
     // Spokes axes
-    var spokeLength = innerRadius - 5 + xRange(25*i) - xRange(0);
+    var spokeLength = 0.9*maxRadius;
     var spokePoints = [];
     for(let i = 0; i< numBinsCircularHistogram; i++){
         var startAngle = 2*Math.PI*i/numBinsCircularHistogram;
@@ -102,6 +133,18 @@ function drawCircleHistogramSpacetime(angleData, timeData, j, xRange, yRange){
         .style("stroke-width",".5px")
         .attr('fill', 'none');
 
+    // Circles axes
+    console.log(xRange(maxRadius))
+    for(var i = 0; i < parseInt(maxRadius - rMin)+1; i++){
+        svg.append("circle")
+            .attr("cx", xRange(0))
+            .attr("cy", yRange(0))
+            .attr("r", (xRange(i) - xRange(0)))
+          .style("fill", "none")
+          .style("stroke", "#b1a7a7")
+          .style("stroke-dasharray", "1,2")
+          .style("stroke-width",".5px");
+    }
 
     // Draw histogram
     svg.append('svg:path')
@@ -141,8 +184,7 @@ function mainCircularHistogramSpacetime(dataIn, startTime, endTime){
     var angleData = resultingData[1];
     var timeData = resultingData[0];
     var ranges = getRangesCircleHistogramSpacetime(timeData, angleData, startTime, endTime)
-    console.log(ranges)
     for(let i = 0; i < angleData.length; i++){
-        drawCircleHistogramSpacetime(angleData[i], timeData[i],   i, ranges[0], ranges[1]);
+        drawCircleHistogramSpacetime(angleData[i], timeData[i],   i, ranges[0], ranges[1], ranges[2]);
     }
 }
