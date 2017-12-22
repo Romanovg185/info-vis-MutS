@@ -112,21 +112,7 @@ function drawCircleHistogram(angleData, j, xRange, yRange, maxRadius){
     // Circles axes
     var a = 0
     for(var i = 0; xRange(25*i) - xRange(0) + innerRadius < maxRadius; i++){
-        a++ // Dummy to keep doing something during this loop
-//        svg.append("circle")
-//            .attr("cx", xRange(0))
-//            .attr("cy", yRange(0))
-//            .attr("r", (innerRadius - 5 + xRange(25*i) - xRange(0)))
-//          .style("fill", "none")
-//          .style("stroke", "#b1a7a7")
-//          .style("stroke-dasharray", "1,2")
-//          .style("stroke-width",".5px");
-//        svg.append("text")
-//            .attr("x", function(d) { return 425; })
-//            .attr("y", function(d) { return innerRadius - 5 + xRange(25*i) - xRange(0); })
-//            .text( function (d) { return 25*i })
-//            .attr("font-family", "sans-serif")
-//            .attr("font-size", "20px")
+        a++ // Dummy to keep doing something during this loop, only the resulting index is needed
     }
 
     // Spokes axes
@@ -184,15 +170,14 @@ function mainCircularHistogram(dataIn){
     for (let key in dataIn.data){
         let i = 0;
         for (let protein in dataIn.data[key].positions){
-            //Note the potential confusion factor here, I divide by 100 for some reason...
-            let myPosition = dataIn.data[key].positions[protein].position/100; //Suspicious division by 100
+            let myPosition = dataIn.data[key].positions[protein].position/100; //Divide by 100 to go to seconds
             if (myPosition > maxValue){
                 maxValue = myPosition;
             }
             if (myPosition < minValue){
                 minValue = myPosition;
             }
-            dataPerProtein[i].push(myPosition); //Glug glug glug, delicious Kool-Aid
+            dataPerProtein[i].push(myPosition); 
             i++;
         }
     }
