@@ -116,7 +116,7 @@ function mainLineGraph(dataIn){
     // While determining the min/max position values, get the positions in a form of datapoint per protein
     for (let key in dataIn.data){
         let i = 0;
-        for (let protein in dataIn.data[key].positions){s
+        for (let protein in dataIn.data[key].positions){
             let myPosition = dataIn.data[key].positions[protein].position/100; // Note division by 100
             if (myPosition > maxValue){
                 maxValue = myPosition;
