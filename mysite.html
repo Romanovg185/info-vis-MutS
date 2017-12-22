@@ -136,34 +136,6 @@ g {
 
 </article>
 
-<p>
-	<input type="file" id="files" name="files[]" multiple />
-	<input id="clickMeHist" type="button" value = "Start" onclick="doFunction();">
-	<input id="clickMeLine" type="button" value="Linear DNA" onclick="doFunction();" />
-	<input id="clickMeCircle" type="button" value="Circular DNA" onclick="doFunction();" />
-	<input type="checkbox" id="boxZero" checked><label for="love"> St 0</label>
-	<input type="checkbox" id="boxOne" checked><label for="love"> St 1</label>	
-	<input type="checkbox" id="boxTwo" checked><label for="love"> St 2</label>
-	<input type="checkbox" id="boxThree" checked><label for="love"> St 3</label>
-	<input type="text" id="numBins" name="Number of bins" value="50"><label for="love"> Number of bins </label>
-</p>
-
-<p>
-	<label for="amount" style="fill: #fff; font: 12px sans-serif;">time range:</label>
-	<input type="text" id="timerange" readonly style="border:0; color:#f6931f; font-weight:bold;">
-	<div id="slider-range"></div>
-	<div id="slider-value" style="display: none;"></div>
-</p>
-
-<div id="lineDiv"> 
-	<svg id="linePlot" width="2000" height="440"></svg>
-	<svg id="spaceTime" width="2000" height="440"></svg>
-</div>
-<div id="circleDiv">
-	<svg id="cLinePlot" width="850" height="850"></svg>
-	<svg id="cSpaceTime" width="850" height="850" transform="translate(1,-1)"></svg>
-</div>
-
 
 
 <output id="list"></output>
