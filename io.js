@@ -77,8 +77,8 @@ function Initial_Legend(d_o) {
  //    		.attr("float", "left");
 
     var tb_c = d3.select("#Legend_cont")
-   			.append("table")
-   			.attr("right", 10);
+   			.append("table");
+   			// .attr("right");
 
 
    	var tb = tb_c.selectAll("table")
@@ -86,16 +86,12 @@ function Initial_Legend(d_o) {
    			.enter().append("tr")
    			.attr("class", "legend-tr")
    			.attr("id", function(d, i){ return String(colorDict[i]);})
-   			.attr("style", function(d, i){ return "background: "+String(colorDict[i])+";";});
+   			.attr("style", function(d, i){ return "background: "+String(colorDict[i])+"; margin: 5px;";});
 
 	var tt = tb.append("text")
-			// .attr("x", 300)
-			// .attr("y", function(d, i){ return i*30;})
-			// .attr("dy", 40)
 			.attr("style", "font-family: sans-serif;" )
 			.attr("style", "font-size: 12px;" )
 			.attr("style", "fill: black" )
-			// .attr("position", "relative")
 			.attr("class", "legendtext")
 			.text(function(d, i){
 				var ptxt = "Protein ";
@@ -103,14 +99,6 @@ function Initial_Legend(d_o) {
 				var divmarker =  " | ";
 				var color_str = String(colorDict[i]);
 				return ptxt+protein_no+divmarker+color_str;});
-
-    // tg.append("rect")
-    //     	.attr("x", 10)
-    // 		.attr("y", function(d, i){ return i*30;})
-    // 		.attr("position", "relative")
-    // 		.attr("width", 80)
-    // 		.attr("height", 20)
-    // 		.attr("fill", function(d, i){ return String(colorDict[i]);});
 
 }
 	
@@ -150,7 +138,7 @@ function Legend_Update(b){
    		let kleur = String(d);
    		output_c.push(polm+kleur);
    		let sel_id = d3.select(polm+kleur)
-   			.attr("style", "opacity: 0");
+   			.attr("style", "opacity: 1; background: "+kleur+";");
    	});
 
 }
