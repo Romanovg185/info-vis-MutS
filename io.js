@@ -28,6 +28,7 @@ function makeDataPoint(ts){
 	return timeStep;
 };
 
+// Simply encapsulate a loop
 function makeSimulation(myLog){
 	var largeArray = myLog.split('\n');
 	var simulation = new Array();
@@ -38,6 +39,7 @@ function makeSimulation(myLog){
 	return simulation;
 };
 
+// Using the new HTML5 FileReader feature
 function readFile(file, i) {
     var myReader = new FileReader();
   	myReader.readAsText(file);
@@ -47,6 +49,7 @@ function readFile(file, i) {
     }
 };
 
+// Gets the files and passes them to the FileReader
 function handleFileSelect(evt) {
     var files = evt.target.files; // FileList object
     for (var i = 0; i < files.length; i++) {
@@ -63,18 +66,6 @@ function Initial_Legend(d_o) {
 		showingProteins.push(true);
 	}
 	var sPT =  d3.zip(showingProteins)
-	// var ts = d3.select("#Legend_cont")
- //  			.append("svg")
- //  			.attr("position", "relative")
- //  			.attr("height", 800)
- //  			.attr("left", 1)
- //  			.attr("width", 100);
-  			
- //  	var tg = ts.selectAll("svg")
- //  			.data(sPT)
- //  			.enter().append("g")
- //    		.attr("class", "legendrect")
- //    		.attr("float", "left");
 
     var tb_c = d3.select("#Legend_cont")
    			.append("table");
@@ -147,20 +138,23 @@ function Legend_Update(b){
 
 
 
-
+// Checks if a file has been obtained
 document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
-// initiate slider after clicking on Histogram button TODO improve UI
+// initiate slider after clicking on Histogram button 
 document.getElementById("clickMeHist").onclick = function(){
-	tmin = data[0].tmin(); // create new tmin and tmax values
+	// Asking for [0] happens because a person could accidentally insert multiple files
+	// The first one is taken in that case
+	tmin = data[0].tmin(); // Create new tmin and tmax values
 	tmax = data[0].tmax();
 	if (legend_status == true){
 		Initial_Legend(data[0]);
 		legend_status = false;
 	}
-	$("#slider-value").trigger('change'); // initiates slider after event change
+	$("#slider-value").trigger('change'); // Initiates slider after event change
 }
 
+// Button for circular DNA
 document.getElementById("clickMeCircle").onclick = function() {
 	isDataCircular = true;
     var mySVG = document.getElementById("circleDiv");
@@ -170,6 +164,7 @@ document.getElementById("clickMeCircle").onclick = function() {
 	master(null, null);
 }
 
+// Button for linear DNA
 document.getElementById("clickMeLine").onclick = function() {
 	isDataCircular = false;
     var mySVG = document.getElementById("circleDiv");
@@ -178,7 +173,8 @@ document.getElementById("clickMeLine").onclick = function() {
     mySVG.style.display="inline";
 	master(null, null)
 }
-// Change globals if button changes
+
+// Change globals if button changes for all four buttons
 document.getElementById('boxZero').onclick = function() {
     if (this.checked){
         isShowingStates[0] = true;
@@ -187,7 +183,6 @@ document.getElementById('boxZero').onclick = function() {
     }
     master(null, null);
 }
-
 document.getElementById('boxOne').onclick = function() {
     if (this.checked){
         isShowingStates[1] = true;
@@ -196,7 +191,6 @@ document.getElementById('boxOne').onclick = function() {
     }
     master(null, null);
 }
-
 document.getElementById('boxTwo').onclick = function() {
     if (this.checked){
         isShowingStates[2] = true;
@@ -205,7 +199,6 @@ document.getElementById('boxTwo').onclick = function() {
     }
     master(null, null);
 }
-
 document.getElementById('boxThree').onclick = function() {
     if (this.checked){
         isShowingStates[3] = true;
@@ -244,23 +237,24 @@ $(".legend-tr").on("change", function(){ console.log("event");});
 function master(event, ui){
     numBinsHistogram = parseInt(document.getElementById('numBins').value);
     numBinsCircularHistogram = numBinsHistogram;
-    var foo = data[0].timeIntervalSlice(
+    var dataToPlot = data[0].timeIntervalSlice(
 		$( "#slider-range" ).slider( "values", 0 ),
 		$( "#slider-range" ).slider( "values", 1 )
 		);
     var statesOfRelevance = []
     isShowingStates.forEach(function(el, i){if(el == true)statesOfRelevance.push(i);});
-    foo = foo.stateSlice(statesOfRelevance);
-	d3.select("#spaceTime").selectAll("*").remove(); // TODO does not work properly for the circular histogram
+    dataToPlot = dataToPlot.stateSlice(statesOfRelevance);
+	// Remove previous plot from the svg
+	d3.select("#spaceTime").selectAll("*").remove(); 
 	d3.select('#linePlot').selectAll("*").remove();
-    d3.select("#cSpaceTime").selectAll("*").remove(); // TODO does not work properly for the circular histogram
+    d3.select("#cSpaceTime").selectAll("*").remove(); 
 	d3.select('#cLinePlot').selectAll("*").remove();
 	if(isDataCircular){
-        mainCircularHistogram(foo);
-        mainCircularHistogramSpacetime(foo, $( "#slider-range" ).slider( "values", 0 ), $( "#slider-range" ).slider( "values", 1 ));
+        mainCircularHistogram(dataToPlot);
+        mainCircularHistogramSpacetime(dataToPlot, $( "#slider-range" ).slider( "values", 0 ), $( "#slider-range" ).slider( "values", 1 ));
 	} else {
-	    mainLineGraph(foo);
-        mainLineGraphSpacetime(foo, $( "#slider-range" ).slider( "values", 0 ), $( "#slider-range" ).slider( "values", 1 ));
+	    mainLineGraph(dataToPlot);
+        mainLineGraphSpacetime(dataToPlot, $( "#slider-range" ).slider( "values", 0 ), $( "#slider-range" ).slider( "values", 1 ));
 	}
 	console.log(Legend_Update(true));
 }
