@@ -13,12 +13,14 @@ function drawLineGraphSpacetime(dataPerProtein, tMin, tMax){
         }
     }
 
+    // Set to the highest/lowest value a 32 bit int can contain
     var xMin = 4294967295;
     var xMax = -4294967295;
     var yMin = 4294967295;
     var yMax = -4294967295;
 
-
+    // Something went wrong with the y axis (probably lexographical comparison of strings instead of numerical comparison
+    // So we did it the hard way...
     xes.forEach(function(el){xMin = d3.min(el) < xMin ? d3.min(el) : xMin});
     xes.forEach(function(el){xMax = d3.max(el) > xMax ? d3.max(el) : xMax});
     for(let i = 0; i < ys.length; i++){
@@ -32,7 +34,7 @@ function drawLineGraphSpacetime(dataPerProtein, tMin, tMax){
         }
     }
 
-
+    // Initialize the variables
     var vis = d3.select('#spaceTime'),
         WIDTH = 1500,
         HEIGHT = 400,
@@ -77,7 +79,7 @@ function drawLineGraphSpacetime(dataPerProtein, tMin, tMax){
         .attr('transform', 'translate(' + (MARGINS.left) + ',0)')
         .call(yAxis);
 
-
+    // Drawing happens here
     for (let h = 0; h < xes.length; h++){
         var dataD3CanRead = []
         for (let i = 0; i < xes[h].length; i++){
@@ -108,16 +110,14 @@ function mainLineGraphSpacetime(dataIn, tMin, tMax){
     for (let key in dataIn.data){
         let i = 0;
         for (let protein in dataIn.data[key].positions){
-            //Note the potential confusion factor here, I divide by 100 for some reason...
-            // QQ something to do with index 3000 @ 30 sec timestep?
-            let myPosition = dataIn.data[key].positions[protein].position/100; //Suspicious division by 100
+            let myPosition = dataIn.data[key].positions[protein].position/100; // Note division by 100
             if (myPosition > maxValue){
                 maxValue = myPosition;
             }
             if (myPosition < minValue){
                 minValue = myPosition;
             }
-            dataPerProtein[i].push({t: key, p:myPosition}); //Glug glug glug, delicious Kool-Aid
+            dataPerProtein[i].push({t: key, p:myPosition}); 
             i++;
         }
     }
