@@ -15,12 +15,12 @@ function DataList(dl) {
 	// TODO : returns NaN instead of 30.0 ??
 	this.tmin = function(){
 		let tmin_ = Math.min(...this.timestamps);
-		return tmin_
+		return tmin_;
 	}
 
 	this.tmax = function(){
 		var tmax_ = Math.max(...this.timestamps);
-		return tmax_
+		return tmax_;
 	}
 
 

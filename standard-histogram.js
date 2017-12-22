@@ -1,6 +1,6 @@
 var maxValue = 0;
 var minValue = 0;
-var colorDict = ["purple", "blue", "green", "red"];
+var colorDict = ["purple", "blue", "green", "yellow", "orange", "red"];
 
 // Classdef of Pair, corresponding to a tuple of (value, p
 function Pair(first, second){

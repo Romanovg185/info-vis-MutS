@@ -5,6 +5,8 @@ var isShowingStates = [true, true, true, true];
 var isDataCircular = false;
 var numBinsHistogram = 50;
 var numBinsCircularHistogram = 50;
+var showingProteins = [];
+var n_max_protein = 0;
 
 // Generates a datapoint from a line in the preprocessed code
 // using the constructor from data-point-classdef.js
@@ -41,7 +43,7 @@ function readFile(file, i) {
     	var rawLog = myReader.result;
       	data[i] = new DataList(makeSimulation(rawLog));
     }
-}
+};
 
 function handleFileSelect(evt) {
     var files = evt.target.files; // FileList object
@@ -51,20 +53,44 @@ function handleFileSelect(evt) {
     }
 };
 
+function Initial_Legend(d_o) {
+	showingProteins = [];
+	n_max_protein = findMaxNumberOfProteins(d_o);
+	var svg_leg = d3.select("#LegendaPlot");
+	for (var i = 0; i < n_max_protein; i++) {
+		showingProteins.push(true);
+	}
+	var sPT =  d3.zip(showingProteins)
+	var tr = d3.select("#Legend_cont")
+  			.append("table")
+  			.selectAll("tr")
+  			.data(sPT)
+  			.enter().append("tr");
 
-// done by using the JQuery and Jquery-IO library
+		var td = tr.selectAll("td")
+  			.data(function(d, i) { return i; })
+  			.enter().append("td")
+  			.attr('fill', colorDict[i])
+  			.attr('stroke', #FFFFFF)
+            .attr('stroke-width', 2)
+    		.text(function(d, i) { return "Protein "+i; });
+	}
+	console.log(showingProteins)
+};
+
+function Legend_Update(d_o, mask) {
+
+}
 
 
 document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
 // initiate slider after clicking on Histogram button TODO improve UI
 document.getElementById("clickMeHist").onclick = function() {
-
 	tmin = data[0].tmin(); // create new tmin and tmax values
 	tmax = data[0].tmax();
+	Initial_Legend(data[0])
 	$( "#slider-value").trigger('change'); // initiates slider after event change
-
-
 }
 
 document.getElementById("clickMeCircle").onclick = function() {
@@ -130,7 +156,7 @@ $( "#slider-value").on( "change", function( event, ui, data) {
 			max: tmax,
 			values: [ 3, 18 ],
 			slide: function( event, ui ) {
-				$( "#timerange" ).val( "t1 = " + ui.values[ 0 ] + " and t2 =" + ui.values[ 1 ] );
+				$( "#timerange" ).val( "[ t1 = " + ui.values[ 0 ] + " , and t2 = " + ui.values[ 1 ] + " ] ");
 			},
 			stop: function( event, ui ) {
 			}
