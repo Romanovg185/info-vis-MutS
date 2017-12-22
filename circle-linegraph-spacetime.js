@@ -77,43 +77,9 @@ function drawCircleHistogramSpacetime(angleData, timeData, j, xRange, yRange, ma
     }
 
     var lineData = centroidPoints;
-
-
     var lineFunc = d3.line()
         .x(function(d) {return xRange(d.x);})
         .y(function(d) {return yRange(d.y);});
-
-
-//    // Circles axes
-//    var WIDTH = 1000;
-//    for(var i = 0; xRange(i) < WIDTH; i++){
-//        svg.append("circle")
-//            .attr("cx", xRange(0))
-//            .attr("cy", yRange(0))
-//            .attr("r", 25*i)
-//          .style("fill", "none")
-//          .style("stroke", "#b1a7a7")
-//          .style("stroke-dasharray", "1,2")
-//          .style("stroke-width",".5px");
-//    }
-//
-//    // Spokes axes
-//    var spokeLength = innerRadius - 5 + xRange(25*i) - xRange(0);
-//    var spokePoints = [];
-//    for(let i = 0; i< numBinsCircularHistogram; i++){
-//        var startAngle = 2*Math.PI*i/numBinsCircularHistogram;
-//        var endAngle = 2*Math.PI*(i+1)/numBinsCircularHistogram;
-//        var x = spokeLength * Math.cos((endAngle + startAngle)/2);
-//        var y = spokeLength * Math.sin((endAngle + startAngle)/2);
-//        spokePoints.push({x:x, y:y});
-//        spokePoints.push({x:0, y:0});
-//    }
-//    svg.append('svg:path')
-//        .attr('d', lineFunc(spokePoints))
-//        .style("stroke", "#b1a7a7")
-//        .style("stroke-dasharray", "2,2")
-//        .style("stroke-width",".5px")
-//        .attr('fill', 'none');
 
     // Spokes axes
     var spokeLength = 0.9*maxRadius;
@@ -164,16 +130,14 @@ function mainCircularHistogramSpacetime(dataIn, startTime, endTime){
     for (let key in dataIn.data){
         let i = 0;
         for (let protein in dataIn.data[key].positions){
-            //Note the potential confusion factor here, I divide by 100 for some reason...
-            // QQ something to do with index 3000 @ 30 sec timestep?
-            let myPosition = dataIn.data[key].positions[protein].position/100; //Suspicious division by 100
+            let myPosition = dataIn.data[key].positions[protein].position/100; //Division by 100 to go to seconds
             if (myPosition > maxValue){
                 maxValue = myPosition;
             }
             if (myPosition < minValue){
                 minValue = myPosition;
             }
-            dataPerProtein[i].push({t: key, p:myPosition}); //Glug glug glug, delicious Kool-Aid
+            dataPerProtein[i].push({t: key, p:myPosition}); 
             i++;
         }
     }
