@@ -2,18 +2,23 @@
 <meta charset="utf-8">
 <html>
 <head>
-	<title>MUTS</title>
+	<title>MutS Simulation Data Viewer</title>
+
 	<link rel="stylesheet" href="jquery-ui.css">
+
+	<script type="text/javascript" src="jquery.js" charset="utf-8"></script>
+    <script type="text/javascript" src="jquery-ui.js" charset="utf-8"></script>
+
 	<script type="text/javascript" src="d3.v4.min.js" charset="utf-8"></script>
 
 	<script type="text/javascript" src="protein-classdef.js" charset="utf-8"></script>
     <script type="text/javascript" src="data-point-classdef.js" charset="utf-8"></script>
     <script type="text/javascript" src="data-list-classdef.js" charset="utf-8"></script>
 
-    <script type="text/javascript" src="jquery.js" charset="utf-8"></script>
-    <script type="text/javascript" src="jquery-ui.js" charset="utf-8"></script>
-    <script type="text/javascript" src="range-slider.js" charset="utf-8"></script>
-
+    <script type="text/javascript" src="circle-linegraph.js" charset="utf-8"></script>
+	<script type="text/javascript" src="standard-linegraph.js" charset="utf-8"></script>
+	<script type="text/javascript" src="standard-linegraph-spacetime.js" charset="utf-8"></script>
+	<script type="text/javascript" src="circle-linegraph-spacetime.js" charset="utf-8"></script>
 
 </head>
 <body>
@@ -28,7 +33,6 @@ body {
 	fill: #fff;
 	font: 12px sans-serif;
 	height: 1;
-	margin: 0px;
 }
 
 p {
@@ -43,6 +47,7 @@ g {
 .right-cont{
 	position: relative;
 	float: right;
+	vertical-align: bottom;
 	margin-right: 10px;
 	margin-left: 30px;
 }
@@ -51,9 +56,6 @@ g {
 
 }
 
-.center_cont{
-	vertical-align: middle;
-}
 
 .navbars{
 	position: relative;
@@ -61,6 +63,7 @@ g {
 	max-width: 600px;
 	margin: 2px;
 	padding: 3px;
+	background: #DAF8CA;
 }
 
 .sliderbars{
@@ -70,9 +73,11 @@ g {
 }
 
 .legend-tr {
-	opacity: 0.5;
+	opacity: 0.2;
 	padding: 10px;
-	margin: 5px;
+	margin: 10px;
+	min-height: 30px;
+	font-size: 16px;
 }
 
 .legendtext{
@@ -81,23 +86,36 @@ g {
 
 
 
+
+
 </style>
+
 <div id="legend_trigger" style="display: none;"></div>
+
 <nav>
 	<div class="navbars">
 		<div class="right-cont">
-			<input id="clickMeHist" type="button" value ="Start" onclick="doFunction()"/>
+			<input id="clickMeHist" type="button" value ="Upload Files" onclick="doFunction()"/>
+		</div>
+		<div class="left-cont">
+			<input type="file" id="files" name="files[]" multiple/>
+		</div>
+	</div>
+		
+	<div class="navbars">
+		<div class="right-cont">
+			<label for="love"> Number of bins: </label>
+			<input type="text" id="numBins" name="Number of bins" value="50">
+		</div>		
+		<div class="left-cont">
 			<input id="clickMeLine" type="button" value="Linear DNA" onclick="doFunction()" />
 			<input id="clickMeCircle" type="button" value="Circular DNA" onclick="doFunction()" />
 		</div>
-		<div class="left-menu">
-			<input type="file" id="files" name="files[]" multiple/>
-		</div>
-
 	</div>
+
 	<div class="navbars">
 		<div class="right-cont">
-			<label for="love"> Number of bins: </label><input type="text" id="numBins" name="Number of bins" style="border:1 ; padding: 1px; margin 2px;" value="50">
+			<label>Time range: </label><input type="text" id="timerange" readonly>
 		</div>
 		<div class="left-cont">
 			<input type="checkbox" id="boxZero" checked><label for="love"> State 0</label>
@@ -105,45 +123,35 @@ g {
 			<input type="checkbox" id="boxTwo" checked><label for="love"> State 2</label>
 			<input type="checkbox" id="boxThree" checked><label for="love"> State 3</label>
 		</div>
-		<!-- <input type="checkbox" id="boxCircular"><label for="love"> Circular DNA</label> -->
 	</div>
-	<div class="sliderbars">
-		<div class="center-cont">
-			<label>Time range: </label><input type="text" id="timerange" readonly>
-		</div>
-	</div>
+
 	<div class="sliderbars">
 		<div id="slider-range"></div>
 		<div id="slider-value" style="display: none;"></div>
 	</div>
 </nav>
-<aside id="Legend_cont" style="float: right;">
+
+<div id="Legend_cont" class="right-cont" style="margin-bottom: -100%;">
 <!-- 		<div id="Legenda">
 			<svg id="LegendaPlot" width="200" height="850"></svg>
 		</div> -->
-</aside>
-<article>
-	<div>
-		<div id="lineDiv"> 
-			<svg id="linePlot" class = "plots" width="2000" height="440" style="overflow: visible;"></svg>
-			<svg id="spaceTime" class = "plots" width="2000" height="440"></svg>
-		</div>
-		<div id="circleDiv">
-			<svg id="cLinePlot" class = "plots" width="850" height="850"></svg>
-			<svg id="cSpaceTime" class = "plots" width="850" height="850" transform="translate(1,-1)"></svg>
-		</div>
-	</div>
+</div>
 
-</article>
+<div>
+	<div id="lineDiv"> 
+		<svg id="linePlot" class = "plots" width="2000" height="440" style="overflow: visible;"></svg>
+		<svg id="spaceTime" class = "plots" width="2000" height="440"></svg>
+	</div>
+	<div id="circleDiv">
+		<svg id="cLinePlot" class = "plots" width="850" height="850"></svg>
+		<svg id="cSpaceTime" class = "plots" width="850" height="850" transform="translate(1,-1)"></svg>
+	</div>
+</div>
+
 
 
 
 <output id="list"></output>
 <script type="text/javascript" src="io.js" charset="utf-8"></script>
-<script type="text/javascript" src="standard-histogram.js" charset="utf-8"></script>
-<script type="text/javascript" src="circle-linegraph.js" charset="utf-8"></script>
-<script type="text/javascript" src="standard-linegraph.js" charset="utf-8"></script>
-<script type="text/javascript" src="standard-linegraph-spacetime.js" charset="utf-8"></script>
-<script type="text/javascript" src="circle-linegraph-spacetime.js" charset="utf-8"></script>
 </body>
 </html>

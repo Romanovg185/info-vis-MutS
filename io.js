@@ -69,8 +69,6 @@ function Initial_Legend(d_o) {
 
     var tb_c = d3.select("#Legend_cont")
    			.append("table");
-   			// .attr("right");
-
 
    	var tb = tb_c.selectAll("table")
    			.data(sPT)
@@ -97,15 +95,27 @@ function Initial_Legend(d_o) {
 function Legend_Update(b){
 	var color_set = [];
 	var color_select = [];
-	var nodes = [];
+
+	var reset_opacity = d3.selectAll(".legend-tr")._groups[0];
+	var output_r = [];
+	reset_opacity.forEach(function(d){
+   		let polm = "#";
+   		let kleur = String(d.id);
+   		output_r.push(polm+kleur);
+   		let sel_id = d3.select(polm+kleur)
+   			.attr("style", "opacity: 0.2; background: "+kleur+";");
+	});
+
 	var SVGs = d3.selectAll(".plots");
-	for (let node in SVGs.entries) {
-		nodes.push(node);
-	};
-	console.log(nodes)
+	console.log(SVGs);
+
 	var subSVG = SVGs.selectAll("*");
 	// console.log(subSVG);
-	var svg_obj_arr = subSVG._groups[0];
+	if (isDataCircular){
+		var svg_obj_arr = subSVG._groups[3];
+	} else {
+		var svg_obj_arr = subSVG._groups[1];
+	}
 	console.log(svg_obj_arr);
 	svg_obj_arr.forEach(function(d){
 		var stroke_color = d3.select(d).attr("stroke");
@@ -215,6 +225,7 @@ $( "#slider-value").on( "change", function( event, ui, data) {
 			range: true,
 			min: tmin,
 			max: tmax,
+			step: 0.01,
 			values: [ 3, 18 ],
 			slide: function( event, ui ) {
 				$( "#timerange" ).val( "[ t1 = " + ui.values[ 0 ] + " , and t2 = " + ui.values[ 1 ] + " ] ");
