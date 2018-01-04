@@ -71,6 +71,10 @@ function getRangesCircleHistogram(angleData){
 
 // Draws a single histogram, has to be extended to be good in overlapping
 function drawCircleHistogram(angleData, j, xRange, yRange, maxRadius){
+    var nancheck = new Set(angleData);
+    if (nancheck.size == 1 && nancheck.has(NaN)) {
+        return;
+    }
     var svg = d3.select('#cLinePlot');
 
     // Just does the grouping

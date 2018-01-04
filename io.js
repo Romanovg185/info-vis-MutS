@@ -9,6 +9,7 @@ var showingProteins = [];
 var n_max_protein = 0;
 var legend_status = true;
 var colorDict = ["pink", "purple", "blue", "lightblue", "green", "yellow", "orange", "red"];
+var protein_checkboxes = [];
 
 // Generates a datapoint from a line in the preprocessed code
 // using the constructor from data-point-classdef.js
@@ -76,7 +77,16 @@ function Initial_Legend(d_o) {
    			.attr("class", "legend-tr")
    			.attr("id", function(d, i){ return String(colorDict[i]);})
    			.attr("style", function(d, i){ return "background: "+String(colorDict[i])+"; margin: 5px;";});
-
+	
+	var tt = tb.append("input")
+		.attr("type", "checkbox")
+		.attr("style", "font-size: 12px;" )
+		.attr("class", "protein-cb")
+		.attr("id", function(d, i){
+			var pr_id_pretext = "p_";
+			var color_str = String(colorDict[i]);
+			return pr_id_pretext+color_str;});
+	
 	var tt = tb.append("text")
 			.attr("style", "font-family: sans-serif;" )
 			.attr("style", "font-size: 12px;" )
@@ -89,6 +99,8 @@ function Initial_Legend(d_o) {
 				var color_str = String(colorDict[i]);
 				return ptxt+protein_no+divmarker+color_str;});
 
+	protein_checkboxes = document.getElementsByClassName("protein-cb");
+
 }
 	
 
@@ -96,31 +108,45 @@ function Legend_Update(b){
 	var color_set = [];
 	var color_select = [];
 
+	//set all legend entries to non-present state style
 	var reset_opacity = d3.selectAll(".legend-tr")._groups[0];
 	var output_r = [];
+
 	reset_opacity.forEach(function(d){
    		let polm = "#";
    		let kleur = String(d.id);
    		output_r.push(polm+kleur);
    		let sel_id = d3.select(polm+kleur)
    			.attr("style", "opacity: 0.2; background: "+kleur+";");
+   		let sel_cb_id = d3.select(polm+"p_"+kleur);
+   		sel_cb_id._groups["0"]["0"].checked = false;
 	});
 
 	var SVGs = d3.selectAll(".plots");
-	console.log(SVGs);
-
 	var subSVG = SVGs.selectAll("*");
-	// console.log(subSVG);
-	if (isDataCircular){
-		var svg_obj_arr = subSVG._groups[3];
-	} else {
-		var svg_obj_arr = subSVG._groups[1];
+
+	// if (isDataCircular){
+	// 	var svg_obj_arr = subSVG._groups[3];
+	// } else {
+	// 	var svg_obj_arr = subSVG._groups[1];
+	// }
+		
+	// svg_obj_arr.forEach(function(d){
+	// 	var stroke_color = d3.select(d).attr("stroke");
+	// 	color_select.push(stroke_color);
+	// 	var add_id = d3.select(d);
+	// 	add_id.attr("id", "sc_"+stroke_color);
+ //   	});
+
+	for (var og = 0; og < subSVG._groups.length; og++) {
+		let svg_obj_arr = subSVG._groups[og];
+		svg_obj_arr.forEach(function(d){
+			var stroke_color = d3.select(d).attr("stroke");
+	   		color_select.push(stroke_color);
+	   		var add_id = d3.select(d);
+	   		add_id.attr("id", "sc_"+stroke_color);
+	   	});
 	}
-	console.log(svg_obj_arr);
-	svg_obj_arr.forEach(function(d){
-		var stroke_color = d3.select(d).attr("stroke");
-   		color_select.push(stroke_color);
-   	});
 
    	for (let i in color_select){
    		let clr = color_select[i];
@@ -130,20 +156,37 @@ function Legend_Update(b){
    			continue;
    		};
    	}
-   	console.log(color_set);
+
    	var really_a_set = new Set(color_set);
    	var output_c = [];
-   	// var back_to_array = Array(really_a_set)
+
    	really_a_set.forEach(function(d){
    		let polm = "#";
    		let kleur = String(d);
    		output_c.push(polm+kleur);
    		let sel_id = d3.select(polm+kleur)
    			.attr("style", "opacity: 1; background: "+kleur+";");
+   		let sel_cb_id = d3.select(polm+"p_"+kleur);
+   		sel_cb_id._groups["0"]["0"].checked = true;
    	});
 
+   	for (var i = 0; i < protein_checkboxes.length; i++) {
+    	protein_checkboxes[i].addEventListener("click", CB_Event, false);
+	}
 }
 
+// Deselect colors in view event
+function CB_Event(obj) {
+    let cb_id_str = String(obj.target.id);
+	let slice_id = cb_id_str.slice(2);
+	var line_select = d3.selectAll("#sc_"+slice_id);
+	var subline = line_select._groups["0"];
+    if (obj.target.checked) {
+    	subline.forEach(function(d) { d.style.removeProperty('display'); });
+    } else { 
+    	subline.forEach(function(d) { d.style.display = 'none'; });
+    }
+};
 
 
 
@@ -240,8 +283,6 @@ $( "#slider-value").on( "change", function( event, ui, data) {
 	} );
 } );
 
-$(".legend-tr").on("change", function(){ console.log("event");});
-
 
 
 // Master function called on change slider or change checkbox
@@ -267,7 +308,7 @@ function master(event, ui){
 	    mainLineGraph(dataToPlot);
         mainLineGraphSpacetime(dataToPlot, $( "#slider-range" ).slider( "values", 0 ), $( "#slider-range" ).slider( "values", 1 ));
 	}
-	console.log(Legend_Update(true));
+	Legend_Update(true);
 }
 
 

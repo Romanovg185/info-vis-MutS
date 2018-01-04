@@ -67,6 +67,10 @@ function getRangesCircleHistogramSpacetime(timeData, angleData, startTime, endTi
 
 // Draws a single histogram, has to be extended to be good in overlapping
 function drawCircleHistogramSpacetime(angleData, timeData, j, xRange, yRange, maxRadius){
+    var nancheck = new Set(angleData);
+    if (nancheck.size == 1 && nancheck.has(NaN)) {
+        return;
+    }
     var svg = d3.select('#cSpaceTime');
     var centroidPoints = [];
     for(let i = 0; i < angleData.length; i++){
@@ -100,7 +104,7 @@ function drawCircleHistogramSpacetime(angleData, timeData, j, xRange, yRange, ma
         .attr('fill', 'none');
 
     // Circles axes
-    console.log(xRange(maxRadius))
+    // console.log(xRange(maxRadius))
     for(var i = 0; i < parseInt(maxRadius - rMin)+1; i++){
         svg.append("circle")
             .attr("cx", xRange(0))

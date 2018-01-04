@@ -93,18 +93,26 @@ function drawLineGraph(dataPerProtein){
     // Drawing itself
     for (let h = 0; h < xes.length; h++){
         var dataD3CanRead = []
+        var yDataCheck = []
         for (let i = 0; i < xes[h].length; i++){
             dataD3CanRead.push({x: xes[h][i], y: ys[h][i]});
+            yDataCheck.push(ys[h][i]);
         }
         var lineData = dataD3CanRead;
-        var lineFunc = d3.line()
-            .x(function(d) { return xRange(d.x);})
-            .y(function(d) { return yRange(d.y);});
-        vis.append('svg:path')
-            .attr('d', lineFunc(lineData))
-            .attr('stroke', colorDict[h])
-            .attr('stroke-width', 2)
-            .attr('fill', 'none');
+
+        var nancheck = new Set(yDataCheck);
+        if (nancheck.size == 1 && nancheck.has(0)) {
+            continue;
+        } else {
+            var lineFunc = d3.line()
+                .x(function(d) { return xRange(d.x);})
+                .y(function(d) { return yRange(d.y);});
+            vis.append('svg:path')
+                .attr('d', lineFunc(lineData))
+                .attr('stroke', colorDict[h])
+                .attr('stroke-width', 2)
+                .attr('fill', 'none');
+            }
     }
 }
 
