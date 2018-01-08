@@ -90,7 +90,7 @@ function drawLineGraphSpacetime(dataPerProtein, tMin, tMax){
 
         var lineData = dataD3CanRead;
 
-        var nancheck = new Set(xDataCheck);
+        var nancheck = new Set(xDataCheck); // checks for all NaN data per protein
         console.log(nancheck);
         if (nancheck.size == 1 && nancheck.has(NaN)) {
             continue;

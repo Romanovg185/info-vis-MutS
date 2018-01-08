@@ -67,7 +67,7 @@ function getRangesCircleHistogramSpacetime(timeData, angleData, startTime, endTi
 
 // Draws a single histogram, has to be extended to be good in overlapping
 function drawCircleHistogramSpacetime(angleData, timeData, j, xRange, yRange, maxRadius){
-    var nancheck = new Set(angleData);
+    var nancheck = new Set(angleData); // checks wether all data within the protein class is NaN
     if (nancheck.size == 1 && nancheck.has(NaN)) {
         return;
     }

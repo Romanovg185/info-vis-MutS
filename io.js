@@ -59,18 +59,21 @@ function handleFileSelect(evt) {
     }
 };
 
+// Creates the legend when the data is read
 function Initial_Legend(d_o) {
 	showingProteins = [];
-	n_max_protein = findMaxNumberOfProteins(d_o);
+	n_max_protein = findMaxNumberOfProteins(d_o); //the number of entries is based on the max number of proteins in the data
 	var svg_leg = d3.select("#LegendaPlot");
 	for (var i = 0; i < n_max_protein; i++) {
 		showingProteins.push(true);
 	}
 	var sPT =  d3.zip(showingProteins)
 
+	// container for the legend
     var tb_c = d3.select("#Legend_cont")
    			.append("table");
 
+   	// table where the rows are the legend entries
    	var tb = tb_c.selectAll("table")
    			.data(sPT)
    			.enter().append("tr")
@@ -78,6 +81,7 @@ function Initial_Legend(d_o) {
    			.attr("id", function(d, i){ return String(colorDict[i]);})
    			.attr("style", function(d, i){ return "background: "+String(colorDict[i])+"; margin: 5px;";});
 	
+	// checkbox where id's are based on the color
 	var tt = tb.append("input")
 		.attr("type", "checkbox")
 		.attr("style", "font-size: 12px;" )
@@ -87,6 +91,7 @@ function Initial_Legend(d_o) {
 			var color_str = String(colorDict[i]);
 			return pr_id_pretext+color_str;});
 	
+	// The entries are identified by their color
 	var tt = tb.append("text")
 			.attr("style", "font-family: sans-serif;" )
 			.attr("style", "font-size: 12px;" )
@@ -103,7 +108,9 @@ function Initial_Legend(d_o) {
 
 }
 	
-
+// Updates the legend when a change event is fired.
+// shows what proteins are shown in the plot by visualising the respective table rows in full color
+// proteins not present in the plot are shown with opacity = 20%
 function Legend_Update(b){
 	var color_set = [];
 	var color_select = [];
@@ -112,6 +119,7 @@ function Legend_Update(b){
 	var reset_opacity = d3.selectAll(".legend-tr")._groups[0];
 	var output_r = [];
 
+	// reset opacity for all table rows to 20%
 	reset_opacity.forEach(function(d){
    		let polm = "#";
    		let kleur = String(d.id);
@@ -122,32 +130,22 @@ function Legend_Update(b){
    		sel_cb_id._groups["0"]["0"].checked = false;
 	});
 
+	// select all plots
 	var SVGs = d3.selectAll(".plots");
 	var subSVG = SVGs.selectAll("*");
 
-	// if (isDataCircular){
-	// 	var svg_obj_arr = subSVG._groups[3];
-	// } else {
-	// 	var svg_obj_arr = subSVG._groups[1];
-	// }
-		
-	// svg_obj_arr.forEach(function(d){
-	// 	var stroke_color = d3.select(d).attr("stroke");
-	// 	color_select.push(stroke_color);
-	// 	var add_id = d3.select(d);
-	// 	add_id.attr("id", "sc_"+stroke_color);
- //   	});
-
+	// extract all objects with a stroke attribute (color)
 	for (var og = 0; og < subSVG._groups.length; og++) {
 		let svg_obj_arr = subSVG._groups[og];
 		svg_obj_arr.forEach(function(d){
 			var stroke_color = d3.select(d).attr("stroke");
 	   		color_select.push(stroke_color);
 	   		var add_id = d3.select(d);
-	   		add_id.attr("id", "sc_"+stroke_color);
+	   		add_id.attr("id", "sc_"+stroke_color); // add an id to the object based on the color
 	   	});
 	}
 
+	// filter grid color and no colors
    	for (let i in color_select){
    		let clr = color_select[i];
    		if (clr != null && clr != 0 && clr != "#000"){
@@ -157,9 +155,10 @@ function Legend_Update(b){
    		};
    	}
 
-   	var really_a_set = new Set(color_set);
+   	var really_a_set = new Set(color_set); // set of colors corresponding to the visualised proteins in the plot
    	var output_c = [];
 
+   	// set the table rows for the visualised proteins to 100% fill
    	really_a_set.forEach(function(d){
    		let polm = "#";
    		let kleur = String(d);
@@ -170,16 +169,17 @@ function Legend_Update(b){
    		sel_cb_id._groups["0"]["0"].checked = true;
    	});
 
+   	// add an eventlistener to the checkboxes
    	for (var i = 0; i < protein_checkboxes.length; i++) {
     	protein_checkboxes[i].addEventListener("click", CB_Event, false);
 	}
 }
 
-// Deselect colors in view event
+// Sets the display attribute for deselected checkboxes and their respective proteins to none
 function CB_Event(obj) {
-    let cb_id_str = String(obj.target.id);
-	let slice_id = cb_id_str.slice(2);
-	var line_select = d3.selectAll("#sc_"+slice_id);
+    let cb_id_str = String(obj.target.id); // id based on color
+	let slice_id = cb_id_str.slice(2); // extract color from string
+	var line_select = d3.selectAll("#sc_"+slice_id); // select elements with id based on color
 	var subline = line_select._groups["0"];
     if (obj.target.checked) {
     	subline.forEach(function(d) { d.style.removeProperty('display'); });

@@ -98,9 +98,10 @@ function drawLineGraph(dataPerProtein){
             dataD3CanRead.push({x: xes[h][i], y: ys[h][i]});
             yDataCheck.push(ys[h][i]);
         }
+
         var lineData = dataD3CanRead;
 
-        var nancheck = new Set(yDataCheck);
+        var nancheck = new Set(yDataCheck);         // checks for all 0 data per protein
         if (nancheck.size == 1 && nancheck.has(0)) {
             continue;
         } else {

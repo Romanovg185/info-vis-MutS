@@ -71,7 +71,7 @@ function getRangesCircleHistogram(angleData){
 
 // Draws a single histogram, has to be extended to be good in overlapping
 function drawCircleHistogram(angleData, j, xRange, yRange, maxRadius){
-    var nancheck = new Set(angleData);
+    var nancheck = new Set(angleData); // checks for all NaN data per protein
     if (nancheck.size == 1 && nancheck.has(NaN)) {
         return;
     }
